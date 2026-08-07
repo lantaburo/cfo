@@ -23,7 +23,8 @@ export async function POST(request: Request) {
         result = JSON.parse(result);
       } catch (e) {
         console.error("Failed to parse GAS response:", result);
-        throw new Error("Invalid response from Google Sheets webhook");
+        const snippet = result.substring(0, 100).replace(/<[^>]*>?/gm, ''); // get text snippet
+        throw new Error(`Invalid response from Google Sheets webhook: ${snippet}`);
       }
     }
 
@@ -31,7 +32,8 @@ export async function POST(request: Request) {
   } catch (error: any) {
     if (error.response) {
       console.error("Failed to parse GAS response:", error.response.data);
-      return NextResponse.json({ status: 'error', message: "Invalid response from Google Sheets webhook" }, { status: 500 });
+      const snippet = typeof error.response.data === 'string' ? error.response.data.substring(0, 100).replace(/<[^>]*>?/gm, '') : JSON.stringify(error.response.data).substring(0, 100);
+      return NextResponse.json({ status: 'error', message: `Invalid response from Google Sheets webhook: ${snippet}` }, { status: 500 });
     }
     return NextResponse.json({ status: 'error', message: error.message }, { status: 500 });
   }
