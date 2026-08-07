@@ -266,7 +266,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
                 <h4 style={{ textAlign: 'center', marginBottom: '16px' }}>ASET</h4>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
-                    <Pie data={assetData} cx="50%" cy="50%" outerRadius={100} label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`} labelLine={false} dataKey="value">
+                    <Pie data={assetData} cx="50%" cy="50%" outerRadius={100} label={({ name, percent }) => `${((percent || 0) * 100).toFixed(0)}%`} labelLine={false} dataKey="value">
                       {assetData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                     </Pie>
                     <RechartsTooltip formatter={(value) => `Rp ${formatCurrency(value as number)}`} />
@@ -278,7 +278,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
                 <h4 style={{ textAlign: 'center', marginBottom: '16px' }}>NETWORTH</h4>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
-                    <Pie data={netWorthData} cx="50%" cy="50%" outerRadius={100} label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`} labelLine={false} dataKey="value">
+                    <Pie data={netWorthData} cx="50%" cy="50%" outerRadius={100} label={({ name, percent }) => `${((percent || 0) * 100).toFixed(0)}%`} labelLine={false} dataKey="value">
                       {netWorthData.map((entry, index) => <Cell key={`cell-${index}`} fill={['#3498db', '#e74c3c'][index % 2]} />)}
                     </Pie>
                     <RechartsTooltip formatter={(value) => `Rp ${formatCurrency(value as number)}`} />
@@ -406,7 +406,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
                 <h4 style={{ textAlign: 'center', marginBottom: '16px' }}>CASH FLOW</h4>
                 <ResponsiveContainer width="100%" height={350}>
                   <PieChart>
-                    <Pie data={cashFlowData} cx="50%" cy="50%" outerRadius={120} label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`} labelLine={false} dataKey="value">
+                    <Pie data={cashFlowData} cx="50%" cy="50%" outerRadius={120} label={({ name, percent }) => `${((percent || 0) * 100).toFixed(0)}%`} labelLine={false} dataKey="value">
                       {cashFlowData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                     </Pie>
                     <RechartsTooltip formatter={(value) => `Rp ${formatCurrency(value as number)}`} />
