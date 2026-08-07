@@ -130,7 +130,7 @@ export default function Dashboard() {
       setTimeout(() => {
         setResult(data);
         setEditableResult(JSON.parse(JSON.stringify(data)));
-        setActiveTab('review_cfo');
+        setActiveTab('snapshot');
         setIsAnalyzing(false);
       }, 500);
 
