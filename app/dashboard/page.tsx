@@ -52,37 +52,22 @@ export default function Dashboard() {
     return isNaN(num) ? '' : num.toLocaleString('id-ID');
   };
 
-  // Form State
-  const [basicInfo, setBasicInfo] = useState({
-    usiaSuami: 34,
-    usiaIstri: 32,
+  const [basicInfo, setBasicInfo] = useState<any>({
+    usiaSuami: '',
+    usiaIstri: '',
     status: 'Menikah',
-    anak: 1,
-    penghasilanBulanan: 58500000,
-    bonusTahunan: 137500000
+    anak: '',
+    penghasilanBulanan: '',
+    bonusTahunan: ''
   });
 
-  const [assets, setAssets] = useState([
-    { id: 1, name: 'Tabungan Danamon (Suami)', type: 'Lancar', value: 300000 },
-    { id: 2, name: 'Tabungan Standard Chartered (Istri)', type: 'Lancar', value: 463047606 },
-    { id: 3, name: 'RDPT Schroder Dana Mantap', type: 'Investasi', value: 69341857 },
-    { id: 4, name: 'Apartemen', type: 'Guna', value: 2500000000 },
-  ]);
+  const [assets, setAssets] = useState<any[]>([]);
 
-  const [debts, setDebts] = useState([
-    { id: 1, name: 'KPA Apartemen', principal: 202298497, monthlyInstallment: 6192959 }
-  ]);
+  const [debts, setDebts] = useState<any[]>([]);
 
-  const [expenses, setExpenses] = useState([
-    { id: 1, name: 'Belanja Bulanan (Groceries)', category: 'Primer', amount: 11000000 },
-    { id: 2, name: 'Listrik & Transport', category: 'Primer', amount: 6000000 },
-    { id: 3, name: 'Uang Sekolah Anak', category: 'Kewajiban', amount: 4500000 },
-    { id: 4, name: 'Asuransi', category: 'Kewajiban', amount: 2000000 },
-  ]);
+  const [expenses, setExpenses] = useState<any[]>([]);
 
-  const [goals, setGoals] = useState<{id: number, name: string, targetAmount: number, timeframe?: string}[]>([
-    { id: 2, name: 'Dana Pendidikan', targetAmount: 10192812825, timeframe: 'Panjang (>5 Tahun)' }
-  ]);
+  const [goals, setGoals] = useState<any[]>([]);
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
