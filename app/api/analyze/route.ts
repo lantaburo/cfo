@@ -76,6 +76,11 @@ export async function POST(request: Request) {
        - Buatkan resume keuangan secara general. Nyatakan secara eksplisit "Sehat" atau "Tidak Sehat" untuk kondisi keuangan secara keseluruhan.
        - Buatkan analisa per bagian dari rasio yang telah dihitung. 
        - Berikan alasan spesifik berdasarkan angka. (Misal: dari Saving Ratio <10%, maka kondisi keuangan nya Tidak Sehat dikarenakan belum adanya dana yang disisihkan untuk menabung/investasi).
+    6. **Analisis Cashflow & Pengeluaran**:
+       - Secara detail evaluasi kategori pengeluaran klien (Primer, Sekunder, Kewajiban, Sosial, Tabungan/Investasi, Latte Factor).
+       - Khusus untuk **'Latte Factor'** (pengeluaran impulsif/terselubung): Berikan saran spesifik cara mengurangi/menghilangkannya untuk dialihkan ke investasi/tabungan.
+       - Khusus untuk **'Sosial'**: Pastikan pengalokasian Zakat/Infaq/Sedekah sudah sesuai standar Syariah.
+       - Khusus untuk **'Primer' & 'Kewajiban'**: Pastikan proporsinya tidak melebihi batas wajar.
     
     Output JSON harus mengikuti struktur ini persis:
     {

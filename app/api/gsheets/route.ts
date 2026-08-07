@@ -9,6 +9,12 @@ export async function POST(request: Request) {
     if (!WEBHOOK_URL) {
       throw new Error("Webhook URL is not defined in .env.local");
     }
+    
+    // Mencegah error Google Sheets Cell Limit (Max 50,000 karakter)
+    // Jika actionPlan terlalu panjang, potong sebelum dikirim ke GAS
+    if (data.actionPlan && typeof data.actionPlan === 'string' && data.actionPlan.length > 45000) {
+      data.actionPlan = data.actionPlan.substring(0, 45000) + "\n\n... [Hasil analisa dipotong otomatis karena melebihi batas maksimal ukuran database]";
+    }
 
     const response = await axios.post(WEBHOOK_URL, JSON.stringify(data), {
       headers: {
