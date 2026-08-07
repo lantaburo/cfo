@@ -337,7 +337,9 @@ export default function Dashboard() {
                       { name: 'Primer', value: expenses.filter((a: any) => a.category === 'Primer').reduce((sum: number, a: any) => sum + a.amount, 0) },
                       { name: 'Kewajiban', value: expenses.filter((a: any) => a.category === 'Kewajiban').reduce((sum: number, a: any) => sum + a.amount, 0) + debts.reduce((sum: number, d: any) => sum + d.monthlyInstallment, 0) },
                       { name: 'Sekunder', value: expenses.filter((a: any) => a.category === 'Sekunder').reduce((sum: number, a: any) => sum + a.amount, 0) },
+                      { name: 'Sosial', value: expenses.filter((a: any) => a.category === 'Sosial').reduce((sum: number, a: any) => sum + a.amount, 0) },
                       { name: 'Tabungan/Investasi', value: expenses.filter((a: any) => a.category === 'Tabungan/Investasi').reduce((sum: number, a: any) => sum + a.amount, 0) },
+                      { name: 'Latte Factor', value: expenses.filter((a: any) => a.category === 'Latte Factor').reduce((sum: number, a: any) => sum + a.amount, 0) },
                       { name: 'Disposable Income', value: basicInfo.penghasilanBulanan - expenses.reduce((sum: number, a: any) => sum + a.amount, 0) - debts.reduce((sum: number, d: any) => sum + d.monthlyInstallment, 0) }
                     ].filter((d: any) => d.value > 0)}
                     cx="50%" cy="50%" innerRadius={60} outerRadius={90} dataKey="value"
@@ -346,12 +348,16 @@ export default function Dashboard() {
                       { name: 'Primer', value: expenses.filter((a: any) => a.category === 'Primer').reduce((sum: number, a: any) => sum + a.amount, 0) },
                       { name: 'Kewajiban', value: expenses.filter((a: any) => a.category === 'Kewajiban').reduce((sum: number, a: any) => sum + a.amount, 0) + debts.reduce((sum: number, d: any) => sum + d.monthlyInstallment, 0) },
                       { name: 'Sekunder', value: expenses.filter((a: any) => a.category === 'Sekunder').reduce((sum: number, a: any) => sum + a.amount, 0) },
+                      { name: 'Sosial', value: expenses.filter((a: any) => a.category === 'Sosial').reduce((sum: number, a: any) => sum + a.amount, 0) },
                       { name: 'Tabungan/Investasi', value: expenses.filter((a: any) => a.category === 'Tabungan/Investasi').reduce((sum: number, a: any) => sum + a.amount, 0) },
+                      { name: 'Latte Factor', value: expenses.filter((a: any) => a.category === 'Latte Factor').reduce((sum: number, a: any) => sum + a.amount, 0) },
                       { name: 'Disposable Income', value: basicInfo.penghasilanBulanan - expenses.reduce((sum: number, a: any) => sum + a.amount, 0) - debts.reduce((sum: number, d: any) => sum + d.monthlyInstallment, 0) }
                     ].filter((d: any) => d.value > 0).map((entry, index) => {
                         let color = COLORS[(index + 1) % COLORS.length];
                         if (entry.name === 'Kewajiban') color = '#ff4e50';
                         if (entry.name === 'Tabungan/Investasi') color = '#2ecc71';
+                        if (entry.name === 'Sosial') color = '#f1c40f';
+                        if (entry.name === 'Latte Factor') color = '#e67e22';
                         return <Cell key={`cell-${index}`} fill={color} />;
                     })}
                   </Pie>
