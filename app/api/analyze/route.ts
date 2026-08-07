@@ -13,21 +13,19 @@ export async function POST(request: Request) {
 
     let settings: any = {};
     try {
-      const settingsRes = await axios.post(WEBHOOK_URL, JSON.stringify({ action: 'getSettings' }), {
+      const settingsRes = await fetch(WEBHOOK_URL, {
+        method: 'POST',
         headers: {
           'Content-Type': 'text/plain',
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        }
+        },
+        body: JSON.stringify({ action: 'getSettings' }),
+        cache: 'no-store'
       });
       
-      let settingsData = settingsRes.data;
-      if (typeof settingsData === 'string') {
-        try {
-          settingsData = JSON.parse(settingsData);
-        } catch(e) {}
-      }
+      let settingsData = await settingsRes.json();
       
-      if (settingsData.status === 'success') {
+      if (settingsData && settingsData.status === 'success' && settingsData.settings) {
         settings = settingsData.settings;
       }
     } catch (e) {
