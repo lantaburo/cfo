@@ -47,9 +47,12 @@ export default function Dashboard() {
   }, [router]);
 
   const formatCurrency = (val: number | string) => {
-    if (val === undefined || val === null) return '';
-    const num = parseInt(val.toString().replace(/[^0-9]/g, ''), 10);
-    return isNaN(num) ? '' : num.toLocaleString('id-ID');
+    if (val === undefined || val === null || val === '') return '';
+    const numStr = val.toString().replace(/[^0-9-]/g, '');
+    const num = parseInt(numStr, 10);
+    if (isNaN(num)) return '';
+    if (num < 0) return `(${Math.abs(num).toLocaleString('id-ID')})`;
+    return num.toLocaleString('id-ID');
   };
 
   const [basicInfo, setBasicInfo] = useState<any>({
@@ -306,13 +309,17 @@ export default function Dashboard() {
                 <PieChart>
                   <Pie 
                     data={[
-                      { name: 'Total Aset', value: assets.reduce((sum, a) => sum + a.value, 0) },
-                      { name: 'Total Hutang', value: debts.reduce((sum, d) => sum + d.principal, 0) }
+                      { name: 'Total Aset', value: assets.reduce((sum: number, a: any) => sum + a.value, 0) },
+                      { name: 'Total Hutang', value: debts.reduce((sum: number, d: any) => sum + d.principal, 0) }
                     ].filter(d => d.value > 0)}
                     cx="50%" cy="50%" innerRadius={0} outerRadius={90} dataKey="value"
                   >
-                    <Cell fill="#2193b0" />
-                    <Cell fill="#ff4e50" />
+                    {[
+                      { name: 'Total Aset', value: assets.reduce((sum: number, a: any) => sum + a.value, 0) },
+                      { name: 'Total Hutang', value: debts.reduce((sum: number, d: any) => sum + d.principal, 0) }
+                    ].filter(d => d.value > 0).map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.name === 'Total Hutang' ? '#ff4e50' : '#2193b0'} />
+                    ))}
                   </Pie>
                   <RechartsTooltip formatter={(val: any) => `Rp ${Number(val).toLocaleString('id-ID')}`} contentStyle={{ background: '#1a1a2e', borderColor: '#333' }} />
                   <Legend />
@@ -335,7 +342,18 @@ export default function Dashboard() {
                     ].filter((d: any) => d.value > 0)}
                     cx="50%" cy="50%" innerRadius={60} outerRadius={90} dataKey="value"
                   >
-                    {[0,1,2,3].map((_, index) => <Cell key={`cell-${index}`} fill={COLORS[(index + 1) % COLORS.length]} />)}
+                    {[
+                      { name: 'Primer', value: expenses.filter((a: any) => a.category === 'Primer').reduce((sum: number, a: any) => sum + a.amount, 0) },
+                      { name: 'Kewajiban', value: expenses.filter((a: any) => a.category === 'Kewajiban').reduce((sum: number, a: any) => sum + a.amount, 0) + debts.reduce((sum: number, d: any) => sum + d.monthlyInstallment, 0) },
+                      { name: 'Sekunder', value: expenses.filter((a: any) => a.category === 'Sekunder').reduce((sum: number, a: any) => sum + a.amount, 0) },
+                      { name: 'Tabungan/Investasi', value: expenses.filter((a: any) => a.category === 'Tabungan/Investasi').reduce((sum: number, a: any) => sum + a.amount, 0) },
+                      { name: 'Disposable Income', value: basicInfo.penghasilanBulanan - expenses.reduce((sum: number, a: any) => sum + a.amount, 0) - debts.reduce((sum: number, d: any) => sum + d.monthlyInstallment, 0) }
+                    ].filter((d: any) => d.value > 0).map((entry, index) => {
+                        let color = COLORS[(index + 1) % COLORS.length];
+                        if (entry.name === 'Kewajiban') color = '#ff4e50';
+                        if (entry.name === 'Tabungan/Investasi') color = '#2ecc71';
+                        return <Cell key={`cell-${index}`} fill={color} />;
+                    })}
                   </Pie>
                   <RechartsTooltip formatter={(val: any) => `Rp ${Number(val).toLocaleString('id-ID')}`} contentStyle={{ background: '#1a1a2e', borderColor: '#333' }} />
                   <Legend />

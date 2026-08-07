@@ -7,9 +7,12 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
   const [activeSubTab, setActiveSubTab] = useState('snapshot');
 
   const formatCurrency = (val: number | string) => {
-    if (val === undefined || val === null) return '';
-    const num = parseInt(val.toString().replace(/[^0-9]/g, ''), 10);
-    return isNaN(num) ? '' : num.toLocaleString('id-ID');
+    if (val === undefined || val === null || val === '') return '';
+    const numStr = val.toString().replace(/[^0-9-]/g, '');
+    const num = parseInt(numStr, 10);
+    if (isNaN(num)) return '';
+    if (num < 0) return `(${Math.abs(num).toLocaleString('id-ID')})`;
+    return num.toLocaleString('id-ID');
   };
 
   // Asset Totals
@@ -285,7 +288,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie data={netWorthData} cx="50%" cy="50%" outerRadius={100} label={({ name, percent }) => `${((percent || 0) * 100).toFixed(0)}%`} labelLine={false} dataKey="value">
-                      {netWorthData.map((entry, index) => <Cell key={`cell-${index}`} fill={['#3498db', '#e74c3c'][index % 2]} />)}
+                      {netWorthData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.name === 'Total Hutang' ? '#ff4e50' : '#3498db'} />)}
                     </Pie>
                     <RechartsTooltip formatter={(value) => `Rp ${formatCurrency(value as number)}`} />
                     <Legend />
@@ -441,7 +444,12 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
                 <ResponsiveContainer width="100%" height={350}>
                   <PieChart>
                     <Pie data={cashFlowData} cx="50%" cy="50%" outerRadius={120} label={({ name, percent }) => `${((percent || 0) * 100).toFixed(0)}%`} labelLine={false} dataKey="value">
-                      {cashFlowData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
+                      {cashFlowData.map((entry, index) => {
+                        let color = COLORS[index % COLORS.length];
+                        if (entry.name === 'Kewajiban') color = '#ff4e50';
+                        if (entry.name === 'Tabungan/Investasi') color = '#2ecc71';
+                        return <Cell key={`cell-${index}`} fill={color} />;
+                      })}
                     </Pie>
                     <RechartsTooltip formatter={(value) => `Rp ${formatCurrency(value as number)}`} />
                     <Legend />
