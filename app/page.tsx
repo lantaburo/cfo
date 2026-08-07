@@ -21,20 +21,6 @@ export default function Home() {
         }} />
         
         <div className="container animate-fade-in" style={{ textAlign: 'center', maxWidth: '900px', zIndex: 1 }}>
-          <div style={{ 
-            display: 'inline-block', 
-            padding: '8px 16px', 
-            background: 'rgba(255,255,255,0.05)', 
-            borderRadius: '100px',
-            border: '1px solid rgba(255,255,255,0.1)',
-            marginBottom: '24px',
-            color: 'var(--accent)',
-            fontSize: '0.9rem',
-            fontWeight: 600,
-            letterSpacing: '1px'
-          }}>
-            🌟 POWERED BY GEMINI AI
-          </div>
           
           <h1 style={{ fontSize: '4rem', lineHeight: 1.1, marginBottom: '24px' }}>
             Your Personal <span className="gradient-text">Sharia</span><br />
