@@ -91,10 +91,10 @@ export default function FinancialCheckup({ basicInfo, assets, debts, expenses, r
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
-              <th style={{ background: 'var(--primary)', color: 'var(--text-main)', padding: '16px', textAlign: 'left', borderRadius: '8px 0 0 0' }}>FINANCIAL RATIO</th>
-              <th style={{ background: 'var(--primary)', color: 'var(--text-main)', padding: '16px', textAlign: 'center' }}>SCORE</th>
-              <th style={{ background: 'var(--primary)', color: 'var(--text-main)', padding: '16px', textAlign: 'center' }}>CONDITION</th>
-              <th style={{ background: 'var(--primary)', color: 'var(--text-main)', padding: '16px', textAlign: 'center', borderRadius: '0 8px 0 0' }}>GUIDE LINE</th>
+              <th style={{ background: 'var(--primary)', color: 'white', padding: '16px', textAlign: 'left', borderRadius: '8px 0 0 0' }}>FINANCIAL RATIO</th>
+              <th style={{ background: 'var(--primary)', color: 'white', padding: '16px', textAlign: 'center' }}>SCORE</th>
+              <th style={{ background: 'var(--primary)', color: 'white', padding: '16px', textAlign: 'center' }}>CONDITION</th>
+              <th style={{ background: 'var(--primary)', color: 'white', padding: '16px', textAlign: 'center', borderRadius: '0 8px 0 0' }}>GUIDE LINE</th>
             </tr>
           </thead>
           <tbody>

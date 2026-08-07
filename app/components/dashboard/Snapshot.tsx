@@ -81,7 +81,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
             <table style={{ width: '100%', marginBottom: '24px', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th colSpan={2} style={{ background: 'var(--primary)', color: 'var(--text-main)', padding: '12px', textAlign: 'center', borderRadius: '8px 8px 0 0' }}>INFORMASI DASAR</th>
+                  <th colSpan={2} style={{ background: 'var(--primary)', color: 'white', padding: '12px', textAlign: 'center', borderRadius: '8px 8px 0 0' }}>INFORMASI DASAR</th>
                 </tr>
               </thead>
               <tbody>
@@ -111,7 +111,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
             <table style={{ width: '100%', marginBottom: '24px', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th colSpan={2} style={{ background: 'var(--primary)', color: 'var(--text-main)', padding: '12px', textAlign: 'center', borderRadius: '8px 8px 0 0' }}>ASET</th>
+                  <th colSpan={2} style={{ background: 'var(--primary)', color: 'white', padding: '12px', textAlign: 'center', borderRadius: '8px 8px 0 0' }}>ASET</th>
                 </tr>
               </thead>
               <tbody>
@@ -133,7 +133,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
             <table style={{ width: '100%', marginBottom: '32px', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th colSpan={2} style={{ background: 'var(--primary)', color: 'var(--text-main)', padding: '12px', textAlign: 'center', borderRadius: '8px 8px 0 0' }}>HUTANG</th>
+                  <th colSpan={2} style={{ background: 'var(--primary)', color: 'white', padding: '12px', textAlign: 'center', borderRadius: '8px 8px 0 0' }}>HUTANG</th>
                 </tr>
               </thead>
               <tbody>
@@ -150,7 +150,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th colSpan={5} style={{ background: 'var(--primary)', color: 'var(--text-main)', padding: '12px', textAlign: 'center', borderRadius: '8px 8px 0 0' }}>THE BIG PICTURE</th>
+                  <th colSpan={5} style={{ background: 'var(--primary)', color: 'white', padding: '12px', textAlign: 'center', borderRadius: '8px 8px 0 0' }}>THE BIG PICTURE</th>
                 </tr>
               </thead>
               <tbody>
@@ -180,7 +180,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
               {/* Aset Lancar */}
               <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px' }}>
                 <thead>
-                  <tr style={{ background: 'var(--primary)' }}>
+                  <tr style={{ background: 'var(--primary)', color: 'white' }}>
                     <th style={{ padding: '8px', textAlign: 'left' }}>Aset Lancar</th>
                     <th style={{ padding: '8px', textAlign: 'right' }}>Nilai</th>
                   </tr>
@@ -202,7 +202,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
               {/* Aset Investasi */}
               <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px' }}>
                 <thead>
-                  <tr style={{ background: 'var(--primary)' }}>
+                  <tr style={{ background: 'var(--primary)', color: 'white' }}>
                     <th style={{ padding: '8px', textAlign: 'left' }}>Aset Investasi</th>
                     <th style={{ padding: '8px', textAlign: 'right' }}>Nilai</th>
                   </tr>
@@ -224,7 +224,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
               {/* Aset Guna */}
               <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px' }}>
                 <thead>
-                  <tr style={{ background: 'var(--primary)' }}>
+                  <tr style={{ background: 'var(--primary)', color: 'white' }}>
                     <th style={{ padding: '8px', textAlign: 'left' }}>Aset Guna</th>
                     <th style={{ padding: '8px', textAlign: 'right' }}>Nilai</th>
                   </tr>
@@ -254,7 +254,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
                 <span>Rp {formatCurrency(totalDebts)}</span>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--primary)', fontWeight: 'bold', marginTop: '16px', borderRadius: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--primary)', color: 'white', fontWeight: 'bold', marginTop: '16px', borderRadius: '8px' }}>
                 <span>TOTAL NETWORTH</span>
                 <span>Rp {formatCurrency(netWorth)}</span>
               </div>
@@ -303,7 +303,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
               {/* PENGHASILAN */}
               <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px' }}>
                 <thead>
-                  <tr style={{ background: 'var(--primary)' }}>
+                  <tr style={{ background: 'var(--primary)', color: 'white' }}>
                     <th style={{ padding: '8px', textAlign: 'left' }}>PENGHASILAN</th>
                     <th style={{ padding: '8px', textAlign: 'right' }}>Bulanan</th>
                     <th style={{ padding: '8px', textAlign: 'right' }}>Tahunan</th>
@@ -331,7 +331,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
               {/* PENGELUARAN PRIMER */}
               <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px' }}>
                 <thead>
-                  <tr style={{ background: 'var(--primary)' }}>
+                  <tr style={{ background: 'var(--primary)', color: 'white' }}>
                     <th style={{ padding: '8px', textAlign: 'left' }}>PENGELUARAN Primer</th>
                     <th style={{ padding: '8px', textAlign: 'right' }}>Bulanan</th>
                   </tr>
@@ -353,7 +353,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
               {/* KEWAJIBAN */}
               <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px' }}>
                 <thead>
-                  <tr style={{ background: 'var(--primary)' }}>
+                  <tr style={{ background: 'var(--primary)', color: 'white' }}>
                     <th style={{ padding: '8px', textAlign: 'left' }}>Kewajiban</th>
                     <th style={{ padding: '8px', textAlign: 'right' }}>Bulanan</th>
                   </tr>
@@ -375,7 +375,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
               {/* SEKUNDER */}
               <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px' }}>
                 <thead>
-                  <tr style={{ background: 'var(--primary)' }}>
+                  <tr style={{ background: 'var(--primary)', color: 'white' }}>
                     <th style={{ padding: '8px', textAlign: 'left' }}>Sekunder</th>
                     <th style={{ padding: '8px', textAlign: 'right' }}>Bulanan</th>
                   </tr>
@@ -394,7 +394,7 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
                 </tbody>
               </table>
               
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--primary)', fontWeight: 'bold', borderRadius: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--primary)', color: 'white', fontWeight: 'bold', borderRadius: '8px' }}>
                 <span>DISPOSABLE INCOME (Tabungan/Investasi)</span>
                 <span>Rp {formatCurrency(savingInvestasi)}</span>
               </div>
