@@ -60,6 +60,12 @@ export default function Dashboard() {
     usiaIstri: '',
     status: 'Menikah',
     anak: '',
+    penghasilanSuami: '',
+    sumberSuami: 'Gaji Bulanan',
+    sumberSuamiLainnya: '',
+    penghasilanIstri: '',
+    sumberIstri: 'Tidak Ada (Ibu Rumah Tangga)',
+    sumberIstriLainnya: '',
     penghasilanBulanan: '',
     bonusTahunan: ''
   });

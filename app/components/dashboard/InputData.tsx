@@ -45,10 +45,60 @@ export default function InputData({
                 <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Jumlah Tanggungan (Anak)</label>
                 <input type="number" placeholder="Berapa anak yang ditanggung?" value={basicInfo.anak} onChange={e => setBasicInfo({...basicInfo, anak: +e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none' }} />
               </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Total Penghasilan Bulanan Bersih (Rp)</label>
-                <input type="text" placeholder="Gaji bulanan gabungan suami & istri" value={formatCurrency(basicInfo.penghasilanBulanan)} onChange={e => setBasicInfo({...basicInfo, penghasilanBulanan: parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none' }} />
-                <small style={{ color: 'var(--text-muted)', display: 'block', marginTop: '6px' }}>*Gaji yang dibawa pulang (Take Home Pay)</small>
+              <div style={{ gridColumn: '1 / -1', marginTop: '16px', background: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <h4 style={{ marginBottom: '16px', color: 'var(--text-main)', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px' }}>Rincian Pendapatan Bulanan</h4>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '20px' }}>
+                  {/* SUAMI */}
+                  <div style={{ background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px' }}>
+                    <h5 style={{ marginBottom: '16px', color: 'var(--primary-light)' }}>Suami</h5>
+                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Nominal Penghasilan (Rp)</label>
+                    <input type="text" placeholder="Gaji/Bawa Pulang" value={formatCurrency(basicInfo.penghasilanSuami)} onChange={e => {
+                      const val = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0;
+                      setBasicInfo({...basicInfo, penghasilanSuami: val, penghasilanBulanan: val + (Number(basicInfo.penghasilanIstri) || 0)});
+                    }} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', marginBottom: '16px' }} />
+                    
+                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Sumber Penghasilan</label>
+                    <select value={basicInfo.sumberSuami} onChange={e => setBasicInfo({...basicInfo, sumberSuami: e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', marginBottom: basicInfo.sumberSuami === 'Lainnya' ? '12px' : '0' }}>
+                      <option>Gaji Bulanan</option>
+                      <option>Keuntungan Bisnis</option>
+                      <option>Freelance / Proyek</option>
+                      <option>Investasi / Pasif</option>
+                      <option>Lainnya</option>
+                    </select>
+                    {basicInfo.sumberSuami === 'Lainnya' && (
+                      <input type="text" placeholder="Sebutkan sumber..." value={basicInfo.sumberSuamiLainnya} onChange={e => setBasicInfo({...basicInfo, sumberSuamiLainnya: e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', marginTop: '12px' }} />
+                    )}
+                  </div>
+
+                  {/* ISTRI */}
+                  <div style={{ background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px' }}>
+                    <h5 style={{ marginBottom: '16px', color: 'var(--primary-light)' }}>Istri</h5>
+                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Nominal Penghasilan (Rp)</label>
+                    <input type="text" placeholder="Gaji/Bawa Pulang" value={formatCurrency(basicInfo.penghasilanIstri)} onChange={e => {
+                      const val = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0;
+                      setBasicInfo({...basicInfo, penghasilanIstri: val, penghasilanBulanan: (Number(basicInfo.penghasilanSuami) || 0) + val});
+                    }} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', marginBottom: '16px' }} />
+                    
+                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Sumber Penghasilan</label>
+                    <select value={basicInfo.sumberIstri} onChange={e => setBasicInfo({...basicInfo, sumberIstri: e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', marginBottom: basicInfo.sumberIstri === 'Lainnya' ? '12px' : '0' }}>
+                      <option>Tidak Ada (Ibu Rumah Tangga)</option>
+                      <option>Gaji Bulanan</option>
+                      <option>Keuntungan Bisnis</option>
+                      <option>Freelance / Proyek</option>
+                      <option>Investasi / Pasif</option>
+                      <option>Lainnya</option>
+                    </select>
+                    {basicInfo.sumberIstri === 'Lainnya' && (
+                      <input type="text" placeholder="Sebutkan sumber..." value={basicInfo.sumberIstriLainnya} onChange={e => setBasicInfo({...basicInfo, sumberIstriLainnya: e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', marginTop: '12px' }} />
+                    )}
+                  </div>
+                </div>
+
+                <div style={{ padding: '16px', background: 'rgba(46, 204, 113, 0.1)', borderRadius: '6px', border: '1px solid rgba(46, 204, 113, 0.2)', textAlign: 'center' }}>
+                  <span style={{ color: 'var(--text-main)' }}>Total Penghasilan Bulanan Gabungan (Otomatis): </span>
+                  <strong style={{ fontSize: '1.2rem', color: '#2ecc71', marginLeft: '12px' }}>Rp {formatCurrency(basicInfo.penghasilanBulanan)}</strong>
+                </div>
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Estimasi Bonus/THR Tahunan (Rp)</label>
