@@ -315,7 +315,7 @@ export default function InputData({
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: '32px' }}>
               {isAnalyzing ? (
                 <div style={{ background: 'rgba(255,255,255,0.05)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-color)', textAlign: 'center' }}>
-                  <h4 style={{ marginBottom: '16px', color: 'var(--primary)' }}>CFO AI sedang menganalisis data Anda...</h4>
+                  <h4 style={{ marginBottom: '16px', color: 'var(--primary)' }}>Kami sedang &quot;atur uang bareng kamu&quot; ditunggu ya...</h4>
                   <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden', marginBottom: '12px' }}>
                     <div style={{ 
                       height: '100%', 
