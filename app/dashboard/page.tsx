@@ -60,14 +60,11 @@ export default function Dashboard() {
     usiaIstri: '',
     status: 'Menikah',
     anak: '',
-    penghasilanSuami: '',
-    sumberSuami: 'Gaji Bulanan',
-    sumberSuamiLainnya: '',
-    penghasilanIstri: '',
-    sumberIstri: 'Tidak Ada (Ibu Rumah Tangga)',
-    sumberIstriLainnya: '',
-    penghasilanBulanan: '',
-    bonusTahunan: ''
+    incomesSuami: [{ id: Date.now(), source: 'Gaji Bulanan', customSource: '', amount: 0 }],
+    incomesIstri: [{ id: Date.now() + 1, source: 'Tidak Ada (Ibu Rumah Tangga)', customSource: '', amount: 0 }],
+    incomesTahunan: [{ id: Date.now() + 2, source: 'Bonus/THR', customSource: '', amount: 0 }],
+    penghasilanBulanan: 0,
+    bonusTahunan: 0
   });
 
   const [assets, setAssets] = useState<any[]>([]);

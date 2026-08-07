@@ -18,6 +18,46 @@ export default function InputData({
   analyzeProgress,
   handleAnalyze
 }: any) {
+  const handleIncomeChange = (type: 'Suami' | 'Istri' | 'Tahunan', index: number, field: string, value: any) => {
+    const listKey = `incomes${type}`;
+    const newList = [...(basicInfo[listKey] || [])];
+    if (newList[index]) {
+      newList[index][field] = value;
+      
+      const newBasicInfo = { ...basicInfo, [listKey]: newList };
+      const totalSuami = (newBasicInfo.incomesSuami || []).reduce((sum: number, inc: any) => sum + (inc.amount || 0), 0);
+      const totalIstri = (newBasicInfo.incomesIstri || []).reduce((sum: number, inc: any) => sum + (inc.amount || 0), 0);
+      const totalTahunan = (newBasicInfo.incomesTahunan || []).reduce((sum: number, inc: any) => sum + (inc.amount || 0), 0);
+      
+      newBasicInfo.penghasilanBulanan = totalSuami + totalIstri;
+      newBasicInfo.bonusTahunan = totalTahunan;
+      
+      setBasicInfo(newBasicInfo);
+    }
+  };
+
+  const handleAddIncome = (type: 'Suami' | 'Istri' | 'Tahunan') => {
+    const listKey = `incomes${type}`;
+    const defaultSource = type === 'Tahunan' ? 'Bonus/THR' : 'Gaji Bulanan';
+    const newList = [...(basicInfo[listKey] || []), { id: Date.now(), source: defaultSource, customSource: '', amount: 0 }];
+    setBasicInfo({ ...basicInfo, [listKey]: newList });
+  };
+
+  const handleRemoveIncome = (type: 'Suami' | 'Istri' | 'Tahunan', id: number) => {
+    const listKey = `incomes${type}`;
+    const newList = (basicInfo[listKey] || []).filter((inc: any) => inc.id !== id);
+    const newBasicInfo = { ...basicInfo, [listKey]: newList };
+    
+    const totalSuami = (newBasicInfo.incomesSuami || []).reduce((sum: number, inc: any) => sum + (inc.amount || 0), 0);
+    const totalIstri = (newBasicInfo.incomesIstri || []).reduce((sum: number, inc: any) => sum + (inc.amount || 0), 0);
+    const totalTahunan = (newBasicInfo.incomesTahunan || []).reduce((sum: number, inc: any) => sum + (inc.amount || 0), 0);
+    
+    newBasicInfo.penghasilanBulanan = totalSuami + totalIstri;
+    newBasicInfo.bonusTahunan = totalTahunan;
+    
+    setBasicInfo(newBasicInfo);
+  };
+
   const renderInputStep = () => {
     switch(step) {
       case 1:
@@ -51,59 +91,91 @@ export default function InputData({
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '20px' }}>
                   {/* SUAMI */}
                   <div style={{ background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px' }}>
-                    <h5 style={{ marginBottom: '16px', color: 'var(--primary-light)' }}>Suami</h5>
-                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Nominal Penghasilan (Rp)</label>
-                    <input type="text" placeholder="Gaji/Bawa Pulang" value={formatCurrency(basicInfo.penghasilanSuami)} onChange={e => {
-                      const val = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0;
-                      setBasicInfo({...basicInfo, penghasilanSuami: val, penghasilanBulanan: val + (Number(basicInfo.penghasilanIstri) || 0)});
-                    }} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', marginBottom: '16px' }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                      <h5 style={{ color: 'var(--primary-light)' }}>Suami</h5>
+                      <button onClick={() => handleAddIncome('Suami')} className="btn btn-outline" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>+ Tambah</button>
+                    </div>
                     
-                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Sumber Penghasilan</label>
-                    <select value={basicInfo.sumberSuami} onChange={e => setBasicInfo({...basicInfo, sumberSuami: e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', marginBottom: basicInfo.sumberSuami === 'Lainnya' ? '12px' : '0' }}>
-                      <option>Gaji Bulanan</option>
-                      <option>Keuntungan Bisnis</option>
-                      <option>Freelance / Proyek</option>
-                      <option>Investasi / Pasif</option>
-                      <option>Lainnya</option>
-                    </select>
-                    {basicInfo.sumberSuami === 'Lainnya' && (
-                      <input type="text" placeholder="Sebutkan sumber..." value={basicInfo.sumberSuamiLainnya} onChange={e => setBasicInfo({...basicInfo, sumberSuamiLainnya: e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', marginTop: '12px' }} />
-                    )}
+                    {(basicInfo.incomesSuami || []).map((inc: any, i: number) => (
+                      <div key={inc.id} style={{ background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: '6px', marginBottom: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                          <label style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Sumber #{i+1}</label>
+                          {i > 0 && <button onClick={() => handleRemoveIncome('Suami', inc.id)} style={{ background: 'transparent', border: 'none', color: '#ff4e50', cursor: 'pointer' }}>✕</button>}
+                        </div>
+                        <select value={inc.source} onChange={e => handleIncomeChange('Suami', i, 'source', e.target.value)} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none', marginBottom: inc.source === 'Lainnya' ? '8px' : '12px' }}>
+                          <option>Gaji Bulanan</option>
+                          <option>Keuntungan Bisnis</option>
+                          <option>Freelance / Proyek</option>
+                          <option>Investasi / Pasif</option>
+                          <option>Lainnya</option>
+                        </select>
+                        {inc.source === 'Lainnya' && (
+                          <input type="text" placeholder="Sebutkan..." value={inc.customSource} onChange={e => handleIncomeChange('Suami', i, 'customSource', e.target.value)} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none', marginBottom: '12px' }} />
+                        )}
+                        <input type="text" placeholder="Nominal (Rp)" value={formatCurrency(inc.amount)} onChange={e => handleIncomeChange('Suami', i, 'amount', parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0)} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }} />
+                      </div>
+                    ))}
                   </div>
 
                   {/* ISTRI */}
                   <div style={{ background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px' }}>
-                    <h5 style={{ marginBottom: '16px', color: 'var(--primary-light)' }}>Istri</h5>
-                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Nominal Penghasilan (Rp)</label>
-                    <input type="text" placeholder="Gaji/Bawa Pulang" value={formatCurrency(basicInfo.penghasilanIstri)} onChange={e => {
-                      const val = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0;
-                      setBasicInfo({...basicInfo, penghasilanIstri: val, penghasilanBulanan: (Number(basicInfo.penghasilanSuami) || 0) + val});
-                    }} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', marginBottom: '16px' }} />
-                    
-                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Sumber Penghasilan</label>
-                    <select value={basicInfo.sumberIstri} onChange={e => setBasicInfo({...basicInfo, sumberIstri: e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', marginBottom: basicInfo.sumberIstri === 'Lainnya' ? '12px' : '0' }}>
-                      <option>Tidak Ada (Ibu Rumah Tangga)</option>
-                      <option>Gaji Bulanan</option>
-                      <option>Keuntungan Bisnis</option>
-                      <option>Freelance / Proyek</option>
-                      <option>Investasi / Pasif</option>
-                      <option>Lainnya</option>
-                    </select>
-                    {basicInfo.sumberIstri === 'Lainnya' && (
-                      <input type="text" placeholder="Sebutkan sumber..." value={basicInfo.sumberIstriLainnya} onChange={e => setBasicInfo({...basicInfo, sumberIstriLainnya: e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', marginTop: '12px' }} />
-                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                      <h5 style={{ color: 'var(--primary-light)' }}>Istri</h5>
+                      <button onClick={() => handleAddIncome('Istri')} className="btn btn-outline" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>+ Tambah</button>
+                    </div>
+
+                    {(basicInfo.incomesIstri || []).map((inc: any, i: number) => (
+                      <div key={inc.id} style={{ background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: '6px', marginBottom: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                          <label style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Sumber #{i+1}</label>
+                          {i > 0 && <button onClick={() => handleRemoveIncome('Istri', inc.id)} style={{ background: 'transparent', border: 'none', color: '#ff4e50', cursor: 'pointer' }}>✕</button>}
+                        </div>
+                        <select value={inc.source} onChange={e => handleIncomeChange('Istri', i, 'source', e.target.value)} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none', marginBottom: inc.source === 'Lainnya' ? '8px' : '12px' }}>
+                          <option>Tidak Ada (Ibu Rumah Tangga)</option>
+                          <option>Gaji Bulanan</option>
+                          <option>Keuntungan Bisnis</option>
+                          <option>Freelance / Proyek</option>
+                          <option>Investasi / Pasif</option>
+                          <option>Lainnya</option>
+                        </select>
+                        {inc.source === 'Lainnya' && (
+                          <input type="text" placeholder="Sebutkan..." value={inc.customSource} onChange={e => handleIncomeChange('Istri', i, 'customSource', e.target.value)} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none', marginBottom: '12px' }} />
+                        )}
+                        <input type="text" placeholder="Nominal (Rp)" value={formatCurrency(inc.amount)} onChange={e => handleIncomeChange('Istri', i, 'amount', parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0)} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }} />
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                <div style={{ padding: '16px', background: 'rgba(46, 204, 113, 0.1)', borderRadius: '6px', border: '1px solid rgba(46, 204, 113, 0.2)', textAlign: 'center' }}>
+                <div style={{ padding: '16px', background: 'rgba(46, 204, 113, 0.1)', borderRadius: '6px', border: '1px solid rgba(46, 204, 113, 0.2)', textAlign: 'center', marginBottom: '24px' }}>
                   <span style={{ color: 'var(--text-main)' }}>Total Penghasilan Bulanan Gabungan (Otomatis): </span>
                   <strong style={{ fontSize: '1.2rem', color: '#2ecc71', marginLeft: '12px' }}>Rp {formatCurrency(basicInfo.penghasilanBulanan)}</strong>
                 </div>
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Estimasi Bonus/THR Tahunan (Rp)</label>
-                <input type="text" placeholder="Total THR & Bonus dalam setahun" value={formatCurrency(basicInfo.bonusTahunan)} onChange={e => setBasicInfo({...basicInfo, bonusTahunan: parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none' }} />
-                <small style={{ color: 'var(--text-muted)', display: 'block', marginTop: '6px' }}>*Total tambahan yang pasti didapat</small>
+
+                {/* TAHUNAN */}
+                <h4 style={{ marginBottom: '16px', color: 'var(--text-main)', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px' }}>Pendapatan Tahunan (Bonus/THR)</h4>
+                <div style={{ background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+                    <button onClick={() => handleAddIncome('Tahunan')} className="btn btn-outline" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>+ Tambah Tahunan</button>
+                  </div>
+
+                  {(basicInfo.incomesTahunan || []).map((inc: any, i: number) => (
+                    <div key={inc.id} style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
+                      <select value={inc.source} onChange={e => handleIncomeChange('Tahunan', i, 'source', e.target.value)} className="glass-panel" style={{ flex: 1, padding: '10px', color: 'var(--text-main)', outline: 'none' }}>
+                        <option>Bonus/THR</option>
+                        <option>Dividen</option>
+                        <option>Hasil Panen/Lainnya</option>
+                      </select>
+                      <input type="text" placeholder="Nominal (Rp)" value={formatCurrency(inc.amount)} onChange={e => handleIncomeChange('Tahunan', i, 'amount', parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0)} className="glass-panel" style={{ flex: 2, padding: '10px', color: 'var(--text-main)', outline: 'none' }} />
+                      {i > 0 && <button onClick={() => handleRemoveIncome('Tahunan', inc.id)} style={{ background: 'transparent', border: 'none', color: '#ff4e50', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>}
+                    </div>
+                  ))}
+
+                  <div style={{ padding: '12px', marginTop: '16px', textAlign: 'right', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '16px' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Total Pendapatan Tahunan (Otomatis): </span>
+                    <strong style={{ fontSize: '1.1rem', color: '#f1c40f', marginLeft: '12px' }}>Rp {formatCurrency(basicInfo.bonusTahunan)}</strong>
+                  </div>
+                </div>
               </div>
             </div>
             <div style={{ marginTop: '32px', textAlign: 'right' }}>
