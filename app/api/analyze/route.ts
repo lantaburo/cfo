@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import axios from 'axios';
 
 export const maxDuration = 60; // Allow function to run up to 60 seconds on Vercel
 
@@ -12,16 +13,20 @@ export async function POST(request: Request) {
 
     let settings: any = {};
     try {
-      const settingsRes = await fetch(WEBHOOK_URL, {
-        method: 'POST',
+      const settingsRes = await axios.post(WEBHOOK_URL, JSON.stringify({ action: 'getSettings' }), {
         headers: {
           'Content-Type': 'text/plain',
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        },
-        body: JSON.stringify({ action: 'getSettings' }),
-        redirect: 'follow'
+        }
       });
-      const settingsData: any = await settingsRes.json();
+      
+      let settingsData = settingsRes.data;
+      if (typeof settingsData === 'string') {
+        try {
+          settingsData = JSON.parse(settingsData);
+        } catch(e) {}
+      }
+      
       if (settingsData.status === 'success') {
         settings = settingsData.settings;
       }
