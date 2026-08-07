@@ -100,7 +100,13 @@ export default function Dashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      const data = await res.json();
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        throw new Error(res.status === 504 ? 'Timeout! AI membutuhkan waktu terlalu lama untuk merespons.' : 'Terjadi kesalahan internal server (500). Silakan coba lagi.');
+      }
       
       clearInterval(progressInterval);
 
