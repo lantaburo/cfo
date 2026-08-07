@@ -479,6 +479,11 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
                 </tbody>
               </table>
               
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'rgba(255,255,255,0.1)', color: 'var(--text-main)', fontWeight: 'bold', borderRadius: '8px', marginBottom: '16px', border: '1px solid var(--border-color)' }}>
+                <span>TOTAL PENGELUARAN</span>
+                <span style={{ color: 'var(--accent)' }}>Rp {formatCurrency(totalPengeluaran)}</span>
+              </div>
+
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--primary)', color: 'white', fontWeight: 'bold', borderRadius: '8px' }}>
                 <span>DISPOSABLE INCOME (Sisa Belum Dialokasikan)</span>
                 <span>Rp {formatCurrency(disposableIncome)}</span>
