@@ -24,10 +24,15 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
 
   // Expense Totals
   const totalPrimer = expenses.filter((e: any) => e.category === 'Primer').reduce((sum: number, e: any) => sum + e.amount, 0);
-  const totalKewajiban = expenses.filter((e: any) => e.category === 'Kewajiban').reduce((sum: number, e: any) => sum + e.amount, 0);
+  const totalKewajibanExpenses = expenses.filter((e: any) => e.category === 'Kewajiban').reduce((sum: number, e: any) => sum + e.amount, 0);
+  const totalDebtInstallments = debts.reduce((sum: number, d: any) => sum + d.monthlyInstallment, 0);
+  const totalKewajiban = totalKewajibanExpenses + totalDebtInstallments;
+  
   const totalSekunder = expenses.filter((e: any) => e.category === 'Sekunder').reduce((sum: number, e: any) => sum + e.amount, 0);
-  const totalPengeluaran = totalPrimer + totalKewajiban + totalSekunder;
-  const savingInvestasi = basicInfo.penghasilanBulanan - totalPengeluaran;
+  const totalTabunganInvestasi = expenses.filter((e: any) => e.category === 'Tabungan/Investasi').reduce((sum: number, e: any) => sum + e.amount, 0);
+  
+  const totalPengeluaran = totalPrimer + totalKewajiban + totalSekunder + totalTabunganInvestasi;
+  const disposableIncome = basicInfo.penghasilanBulanan - totalPengeluaran;
 
   // Chart Data
   const assetData = [
@@ -45,7 +50,8 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
     { name: 'Primer', value: totalPrimer },
     { name: 'Kewajiban', value: totalKewajiban },
     { name: 'Sekunder', value: totalSekunder },
-    { name: 'Tabungan/Investasi', value: savingInvestasi > 0 ? savingInvestasi : 0 },
+    { name: 'Tabungan/Investasi', value: totalTabunganInvestasi },
+    { name: 'Disposable Income', value: disposableIncome > 0 ? disposableIncome : 0 },
   ].filter(d => d.value > 0);
 
   const navButtonStyle = (tabName: string) => ({
@@ -354,11 +360,17 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
               <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px' }}>
                 <thead>
                   <tr style={{ background: 'var(--primary)', color: 'white' }}>
-                    <th style={{ padding: '8px', textAlign: 'left' }}>Kewajiban</th>
+                    <th style={{ padding: '8px', textAlign: 'left' }}>Kewajiban (Pengeluaran & Cicilan)</th>
                     <th style={{ padding: '8px', textAlign: 'right' }}>Bulanan</th>
                   </tr>
                 </thead>
                 <tbody>
+                  {debts.map((d: any) => (
+                    <tr key={`debt-${d.id}`} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                      <td style={{ padding: '8px' }}>Cicilan: {d.name}</td>
+                      <td style={{ padding: '8px', textAlign: 'right' }}>Rp {formatCurrency(d.monthlyInstallment)}</td>
+                    </tr>
+                  ))}
                   {expenses.filter((e: any) => e.category === 'Kewajiban').map((e: any) => (
                     <tr key={e.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                       <td style={{ padding: '8px' }}>{e.name}</td>
@@ -393,10 +405,32 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
                   </tr>
                 </tbody>
               </table>
+
+              {/* TABUNGAN/INVESTASI */}
+              <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '24px' }}>
+                <thead>
+                  <tr style={{ background: 'var(--primary)', color: 'white' }}>
+                    <th style={{ padding: '8px', textAlign: 'left' }}>Tabungan & Investasi</th>
+                    <th style={{ padding: '8px', textAlign: 'right' }}>Bulanan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {expenses.filter((e: any) => e.category === 'Tabungan/Investasi').map((e: any) => (
+                    <tr key={e.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                      <td style={{ padding: '8px' }}>{e.name}</td>
+                      <td style={{ padding: '8px', textAlign: 'right' }}>Rp {formatCurrency(e.amount)}</td>
+                    </tr>
+                  ))}
+                  <tr style={{ fontWeight: 'bold', background: 'rgba(255,255,255,0.05)' }}>
+                    <td style={{ padding: '8px' }}>Total Tabungan/Investasi</td>
+                    <td style={{ padding: '8px', textAlign: 'right' }}>Rp {formatCurrency(totalTabunganInvestasi)}</td>
+                  </tr>
+                </tbody>
+              </table>
               
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--primary)', color: 'white', fontWeight: 'bold', borderRadius: '8px' }}>
-                <span>DISPOSABLE INCOME (Tabungan/Investasi)</span>
-                <span>Rp {formatCurrency(savingInvestasi)}</span>
+                <span>DISPOSABLE INCOME (Sisa Belum Dialokasikan)</span>
+                <span>Rp {formatCurrency(disposableIncome)}</span>
               </div>
             </div>
 

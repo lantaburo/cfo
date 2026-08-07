@@ -133,7 +133,7 @@ export default function InputData({
                 <div key={exp.id} style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
                   <input type="text" placeholder="Item" value={exp.name} onChange={e => { const n = [...expenses]; n[i].name = e.target.value; setExpenses(n); }} className="glass-panel" style={{ flex: 2, padding: '10px', color: 'var(--text-main)' }} />
                   <select value={exp.category} onChange={e => { const n = [...expenses]; n[i].category = e.target.value; setExpenses(n); }} className="glass-panel" style={{ flex: 1, padding: '10px', color: 'var(--text-main)' }}>
-                    <option>Primer</option><option>Kewajiban</option><option>Sekunder</option>
+                    <option>Primer</option><option>Kewajiban</option><option>Sekunder</option><option>Tabungan/Investasi</option>
                   </select>
                   <input type="text" placeholder="Nominal (Rp)" value={formatCurrency(exp.amount)} onChange={e => { const n = [...expenses]; n[i].amount = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0; setExpenses(n); }} className="glass-panel" style={{ flex: 1.5, padding: '10px', color: 'var(--text-main)' }} />
                   <button onClick={() => setExpenses(expenses.filter((a: any) => a.id !== exp.id))} style={{ background: 'transparent', border: 'none', color: '#ff4e50', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>

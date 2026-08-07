@@ -327,11 +327,12 @@ export default function Dashboard() {
                 <PieChart>
                   <Pie 
                     data={[
-                      { name: 'Primer', value: expenses.filter(a => a.category === 'Primer').reduce((sum, a) => sum + a.amount, 0) },
-                      { name: 'Kewajiban', value: expenses.filter(a => a.category === 'Kewajiban').reduce((sum, a) => sum + a.amount, 0) },
-                      { name: 'Sekunder', value: expenses.filter(a => a.category === 'Sekunder').reduce((sum, a) => sum + a.amount, 0) },
-                      { name: 'Sisa/Tabungan', value: basicInfo.penghasilanBulanan - expenses.reduce((sum, a) => sum + a.amount, 0) - debts.reduce((sum, a) => sum + a.monthlyInstallment, 0) }
-                    ].filter(d => d.value > 0)}
+                      { name: 'Primer', value: expenses.filter((a: any) => a.category === 'Primer').reduce((sum: number, a: any) => sum + a.amount, 0) },
+                      { name: 'Kewajiban', value: expenses.filter((a: any) => a.category === 'Kewajiban').reduce((sum: number, a: any) => sum + a.amount, 0) + debts.reduce((sum: number, d: any) => sum + d.monthlyInstallment, 0) },
+                      { name: 'Sekunder', value: expenses.filter((a: any) => a.category === 'Sekunder').reduce((sum: number, a: any) => sum + a.amount, 0) },
+                      { name: 'Tabungan/Investasi', value: expenses.filter((a: any) => a.category === 'Tabungan/Investasi').reduce((sum: number, a: any) => sum + a.amount, 0) },
+                      { name: 'Disposable Income', value: basicInfo.penghasilanBulanan - expenses.reduce((sum: number, a: any) => sum + a.amount, 0) - debts.reduce((sum: number, d: any) => sum + d.monthlyInstallment, 0) }
+                    ].filter((d: any) => d.value > 0)}
                     cx="50%" cy="50%" innerRadius={60} outerRadius={90} dataKey="value"
                   >
                     {[0,1,2,3].map((_, index) => <Cell key={`cell-${index}`} fill={COLORS[(index + 1) % COLORS.length]} />)}
