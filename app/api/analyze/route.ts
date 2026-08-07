@@ -30,11 +30,11 @@ export async function POST(request: Request) {
       }
     } catch (e) {
       console.warn("Gagal mengambil setting dari GSheets, menggunakan default (Gemini)", e);
-      settings = { ai_provider: 'Gemini', ai_model: 'gemini-1.5-pro' };
+      settings = { ai_provider: 'Gemini', ai_model: 'gemini-1.5-flash' };
     }
 
     const provider = settings.ai_provider || 'Gemini';
-    const model = settings.ai_model || 'gemini-1.5-pro';
+    const model = settings.ai_model || 'gemini-1.5-flash';
     const customUrl = settings.ai_custom_url || 'https://api.openai.com/v1/chat/completions';
     
     // Fallback to local .env if api_key is empty in Sheets
