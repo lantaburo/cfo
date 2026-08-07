@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
+import InputData from '../components/dashboard/InputData';
+import Snapshot from '../components/dashboard/Snapshot';
+import FinancialCheckup from '../components/dashboard/FinancialCheckup';
 
 const COLORS = ['#F9D423', '#2193b0', '#6dd5ed', '#ff4e50', '#f9d423'];
 
@@ -200,208 +203,7 @@ export default function Dashboard() {
     }
   };
 
-  const renderInputStep = () => {
-    switch(step) {
-      case 1:
-        return (
-          <div className="animate-fade-in">
-            <h3 style={{ marginBottom: '12px' }}>Informasi Dasar & Pemasukan</h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '0.95rem' }}>Lengkapi data dasar ini agar AI dapat menyusun rencana keuangan yang paling sesuai dengan profil risiko dan kondisi Anda.</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Usia Suami</label>
-                <input type="number" placeholder="Contoh: 35" value={basicInfo.usiaSuami} onChange={e => setBasicInfo({...basicInfo, usiaSuami: +e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none' }} />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Usia Istri</label>
-                <input type="number" placeholder="Contoh: 32" value={basicInfo.usiaIstri} onChange={e => setBasicInfo({...basicInfo, usiaIstri: +e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none' }} />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Status Pernikahan</label>
-                <select value={basicInfo.status} onChange={e => setBasicInfo({...basicInfo, status: e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none' }}>
-                  <option>Menikah</option>
-                  <option>Belum Menikah</option>
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Jumlah Tanggungan (Anak)</label>
-                <input type="number" placeholder="Berapa anak yang ditanggung?" value={basicInfo.anak} onChange={e => setBasicInfo({...basicInfo, anak: +e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none' }} />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Total Penghasilan Bulanan Bersih (Rp)</label>
-                <input type="text" placeholder="Gaji bulanan gabungan suami & istri" value={formatCurrency(basicInfo.penghasilanBulanan)} onChange={e => setBasicInfo({...basicInfo, penghasilanBulanan: parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none' }} />
-                <small style={{ color: 'var(--text-muted)', display: 'block', marginTop: '6px' }}>*Gaji yang dibawa pulang (Take Home Pay)</small>
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Estimasi Bonus/THR Tahunan (Rp)</label>
-                <input type="text" placeholder="Total THR & Bonus dalam setahun" value={formatCurrency(basicInfo.bonusTahunan)} onChange={e => setBasicInfo({...basicInfo, bonusTahunan: parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none' }} />
-                <small style={{ color: 'var(--text-muted)', display: 'block', marginTop: '6px' }}>*Total tambahan yang pasti didapat</small>
-              </div>
-            </div>
-            <div style={{ marginTop: '32px', textAlign: 'right' }}>
-              <button onClick={() => setStep(2)} className="btn btn-primary">Selanjutnya: Isi Data Aset ➔</button>
-            </div>
-          </div>
-        );
-      case 2:
-        return (
-          <div className="animate-fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h3>Daftar Aset</h3>
-              <button onClick={() => setAssets([...assets, { id: Date.now(), name: '', type: 'Lancar', value: 0 }])} className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '0.9rem' }}>+ Tambah Aset</button>
-            </div>
-            {assets.map((asset, i) => (
-              <div key={asset.id} style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
-                <input type="text" placeholder="Nama Aset" value={asset.name} onChange={e => { const n = [...assets]; n[i].name = e.target.value; setAssets(n); }} className="glass-panel" style={{ flex: 2, padding: '10px', color: 'var(--text-main)' }} />
-                <select value={asset.type} onChange={e => { const n = [...assets]; n[i].type = e.target.value; setAssets(n); }} className="glass-panel" style={{ flex: 1, padding: '10px', color: 'var(--text-main)' }}>
-                  <option>Lancar</option><option>Investasi</option><option>Guna</option>
-                </select>
-                <input type="text" placeholder="Nilai (Rp)" value={formatCurrency(asset.value)} onChange={e => { const n = [...assets]; n[i].value = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0; setAssets(n); }} className="glass-panel" style={{ flex: 1.5, padding: '10px', color: 'var(--text-main)' }} />
-                <button onClick={() => setAssets(assets.filter(a => a.id !== asset.id))} style={{ background: 'transparent', border: 'none', color: '#ff4e50', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
-              </div>
-            ))}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '32px' }}>
-              <button onClick={() => setStep(1)} className="btn btn-outline">⬅ Kembali</button>
-              <button onClick={() => setStep(3)} className="btn btn-primary">Selanjutnya: Hutang ➔</button>
-            </div>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="animate-fade-in">
-            <h3 style={{ marginBottom: '12px' }}>Daftar Hutang & Kewajiban</h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '0.95rem' }}>Masukkan semua hutang yang masih berjalan. Data ini penting untuk menghitung rasio hutang Anda.</p>
-            
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
-              <button onClick={() => setDebts([...debts, { id: Date.now(), name: '', principal: 0, monthlyInstallment: 0 }])} className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '0.9rem' }}>+ Tambah Hutang</button>
-            </div>
-
-            {debts.map((debt, i) => (
-              <div key={debt.id} style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px', background: 'rgba(255,255,255,0.02)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Hutang #{i + 1}</label>
-                  <button onClick={() => setDebts(debts.filter(a => a.id !== debt.id))} style={{ background: 'transparent', border: 'none', color: '#ff4e50', cursor: 'pointer', fontSize: '1.2rem', padding: '0 8px' }}>✕</button>
-                </div>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <div style={{ flex: 2 }}>
-                    <input type="text" placeholder="Nama Pinjaman (Mis: KPR, Paylater)" value={debt.name} onChange={e => { const n = [...debts]; n[i].name = e.target.value; setDebts(n); }} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }} />
-                  </div>
-                  <div style={{ flex: 1.5 }}>
-                    <input type="text" placeholder="Sisa Pokok (Rp)" value={formatCurrency(debt.principal)} onChange={e => { const n = [...debts]; n[i].principal = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0; setDebts(n); }} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }} />
-                    <small style={{ color: 'var(--text-muted)', display: 'block', marginTop: '4px', fontSize: '0.75rem' }}>*Total sisa hutang saat ini</small>
-                  </div>
-                  <div style={{ flex: 1.5 }}>
-                    <input type="text" placeholder="Cicilan Bulanan (Rp)" value={formatCurrency(debt.monthlyInstallment)} onChange={e => { const n = [...debts]; n[i].monthlyInstallment = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0; setDebts(n); }} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }} />
-                    <small style={{ color: 'var(--text-muted)', display: 'block', marginTop: '4px', fontSize: '0.75rem' }}>*Yang dibayar tiap bulan</small>
-                  </div>
-                </div>
-              </div>
-            ))}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '32px' }}>
-              <button onClick={() => setStep(2)} className="btn btn-outline">⬅ Kembali</button>
-              <button onClick={() => setStep(4)} className="btn btn-primary">Selanjutnya: Pengeluaran ➔</button>
-            </div>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="animate-fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h3>Cash Flow (Pengeluaran Bulanan)</h3>
-              <button onClick={() => setExpenses([...expenses, { id: Date.now(), name: '', category: 'Primer', amount: 0 }])} className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '0.9rem' }}>+ Tambah Pengeluaran</button>
-            </div>
-            <div style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '8px' }}>
-              {expenses.map((exp, i) => (
-                <div key={exp.id} style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
-                  <input type="text" placeholder="Item" value={exp.name} onChange={e => { const n = [...expenses]; n[i].name = e.target.value; setExpenses(n); }} className="glass-panel" style={{ flex: 2, padding: '10px', color: 'var(--text-main)' }} />
-                  <select value={exp.category} onChange={e => { const n = [...expenses]; n[i].category = e.target.value; setExpenses(n); }} className="glass-panel" style={{ flex: 1, padding: '10px', color: 'var(--text-main)' }}>
-                    <option>Primer</option><option>Kewajiban</option><option>Sekunder</option>
-                  </select>
-                  <input type="text" placeholder="Nominal (Rp)" value={formatCurrency(exp.amount)} onChange={e => { const n = [...expenses]; n[i].amount = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0; setExpenses(n); }} className="glass-panel" style={{ flex: 1.5, padding: '10px', color: 'var(--text-main)' }} />
-                  <button onClick={() => setExpenses(expenses.filter(a => a.id !== exp.id))} style={{ background: 'transparent', border: 'none', color: '#ff4e50', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
-                </div>
-              ))}
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '32px' }}>
-              <button onClick={() => setStep(3)} className="btn btn-outline">⬅ Kembali</button>
-              <button onClick={() => setStep(5)} className="btn btn-primary">Selanjutnya: Tujuan ➔</button>
-            </div>
-          </div>
-        );
-      case 5:
-        return (
-          <div className="animate-fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h3>Tujuan Keuangan (Financial Goals)</h3>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                {goals.length >= 2 && (
-                  <span style={{ fontSize: '0.8rem', background: 'rgba(249, 212, 35, 0.2)', color: 'var(--accent)', padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--accent)' }}>💎 PRO FITUR: Max 2 Tujuan</span>
-                )}
-                <button 
-                  onClick={() => goals.length < 2 && setGoals([...goals, { id: Date.now(), name: '', targetAmount: 0, timeframe: 'Pendek (1-3 Tahun)' }])}
-                  className="btn btn-outline"
-                  style={{ padding: '6px 12px', fontSize: '0.9rem', opacity: goals.length >= 2 ? 0.5 : 1, cursor: goals.length >= 2 ? 'not-allowed' : 'pointer' }}
-                  disabled={goals.length >= 2}
-                >
-                  + Tambah Tujuan
-                </button>
-              </div>
-            </div>
-            
-            {goals.map((goal, i) => (
-              <div key={goal.id} style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px', background: 'rgba(255,255,255,0.02)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Tujuan Keuangan #{i + 1}</label>
-                  <button onClick={() => setGoals(goals.filter(a => a.id !== goal.id))} style={{ background: 'transparent', border: 'none', color: '#ff4e50', cursor: 'pointer', fontSize: '1.2rem', padding: '0 8px' }}>✕</button>
-                </div>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <div style={{ flex: 1.5 }}>
-                    <input type="text" placeholder="Nama Tujuan (Mis: Pendidikan)" value={goal.name} onChange={e => { const n = [...goals]; n[i].name = e.target.value; setGoals(n); }} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }} />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <select value={goal.timeframe} onChange={e => { const n = [...goals]; n[i].timeframe = e.target.value; setGoals(n); }} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }}>
-                      <option value="Pendek (1-3 Tahun)">Pendek (1-3 Tahun)</option>
-                      <option value="Menengah (4-5 Tahun)">Menengah (4-5 Tahun)</option>
-                      <option value="Panjang (>5 Tahun)">Panjang (&gt;5 Tahun)</option>
-                    </select>
-                  </div>
-                  <div style={{ flex: 1.5 }}>
-                    <input type="text" placeholder="Target Dana (Rp)" value={formatCurrency(goal.targetAmount)} onChange={e => { const n = [...goals]; n[i].targetAmount = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0; setGoals(n); }} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }} />
-                  </div>
-                </div>
-              </div>
-            ))}
-            
-            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '32px' }}>
-              {isAnalyzing ? (
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-color)', textAlign: 'center' }}>
-                  <h4 style={{ marginBottom: '16px', color: 'var(--primary)' }}>CFO AI sedang menganalisis data Anda...</h4>
-                  <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden', marginBottom: '12px' }}>
-                    <div style={{ 
-                      height: '100%', 
-                      width: `${analyzeProgress}%`, 
-                      background: 'linear-gradient(90deg, var(--primary), var(--accent))', 
-                      transition: 'width 0.3s ease-out' 
-                    }} />
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                    <span>{analyzeProgress < 30 ? 'Membaca portofolio...' : analyzeProgress < 60 ? 'Menghitung rasio kesehatan...' : analyzeProgress < 90 ? 'Menyusun rekomendasi Syariah...' : 'Finalisasi hasil...'}</span>
-                    <span>{analyzeProgress >= 95 ? '95% (Menunggu AI...)' : `${analyzeProgress}%`}</span>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <button onClick={() => setStep(4)} className="btn btn-outline">⬅ Kembali</button>
-                  <button onClick={handleAnalyze} className="btn btn-primary" style={{ minWidth: '200px' }}>
-                    ✅ Generate Bookplan AI
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        );
-    }
-  };
+  // Removed renderInputStep(), it is now in InputData.tsx
 
   const navButtonStyle = (tabName: string) => ({
     background: 'transparent', 
@@ -418,197 +220,52 @@ export default function Dashboard() {
       
       {/* Header Tabs */}
       <div style={{ display: 'flex', gap: '24px', marginBottom: '32px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px', overflowX: 'auto' }}>
-        <button onClick={() => setActiveTab('input')} style={navButtonStyle('input')}>1. Data Klien</button>
-        <button onClick={() => result && setActiveTab('snapshot')} disabled={!result} style={navButtonStyle('snapshot')}>2. Snapshot</button>
-        <button onClick={() => result && setActiveTab('action_plan')} disabled={!result} style={navButtonStyle('action_plan')}>3. Action Plan</button>
-        <button onClick={() => result && setActiveTab('rekomendasi')} disabled={!result} style={navButtonStyle('rekomendasi')}>4. Rekomendasi</button>
-        <button onClick={() => result && setActiveTab('edit_final')} disabled={!result} style={navButtonStyle('edit_final')}>5. Finalisasi</button>
+        <button onClick={() => setActiveTab('input')} style={navButtonStyle('input')}>1. Input Data</button>
+        <button onClick={() => setActiveTab('snapshot')} style={navButtonStyle('snapshot')}>2. Snapshot</button>
+        <button onClick={() => setActiveTab('checkup')} style={navButtonStyle('checkup')}>3. Financial Checkup</button>
+        <button onClick={() => result && setActiveTab('action_plan')} disabled={!result} style={navButtonStyle('action_plan')}>4. Action Plan</button>
+        <button onClick={() => result && setActiveTab('rekomendasi')} disabled={!result} style={navButtonStyle('rekomendasi')}>5. Rekomendasi</button>
+        <button onClick={() => result && setActiveTab('edit_final')} disabled={!result} style={navButtonStyle('edit_final')}>6. Finalisasi</button>
       </div>
 
       {activeTab === 'input' && (
-        <div className="glass-card animate-fade-in" style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
-            {[1,2,3,4,5].map(s => (
-              <div key={s} style={{ height: '4px', flex: 1, background: s <= step ? 'var(--primary)' : 'rgba(255,255,255,0.1)', borderRadius: '2px', transition: '0.3s' }} />
-            ))}
-          </div>
-          {renderInputStep()}
-        </div>
+        <InputData 
+          step={step}
+          setStep={setStep}
+          basicInfo={basicInfo}
+          setBasicInfo={setBasicInfo}
+          assets={assets}
+          setAssets={setAssets}
+          debts={debts}
+          setDebts={setDebts}
+          expenses={expenses}
+          setExpenses={setExpenses}
+          goals={goals}
+          setGoals={setGoals}
+          formatCurrency={formatCurrency}
+          isAnalyzing={isAnalyzing}
+          analyzeProgress={analyzeProgress}
+          handleAnalyze={handleAnalyze}
+        />
       )}
 
-      {activeTab === 'snapshot' && result && (
-        <div className="animate-fade-in">
-          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <h1 className="gradient-text" style={{ fontSize: '2.2rem', marginBottom: '8px' }}>A Snapshot of Your Current Finances</h1>
-            <p style={{ color: 'var(--text-muted)' }}>This is where you stand today: the starting line for your Action Program</p>
-          </div>
+      {activeTab === 'snapshot' && (
+        <Snapshot 
+          basicInfo={basicInfo}
+          assets={assets}
+          debts={debts}
+          expenses={expenses}
+        />
+      )}
 
-          <div style={{ maxWidth: '800px', margin: '0 auto', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '32px', marginBottom: '40px' }}>
-            
-            {/* The Basics */}
-            <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '8px', marginBottom: '16px', textAlign: 'center', fontStyle: 'italic', fontWeight: 'normal' }}>The Basics</h3>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span>Age (Suami & Istri)</span><span>{basicInfo.usiaSuami} & {basicInfo.usiaIstri}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span>Kids</span><span>{basicInfo.anak}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span>Annual Household Income</span><span>Rp {((basicInfo.penghasilanBulanan * 12) + basicInfo.bonusTahunan).toLocaleString('id-ID')}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}><span>Monthly Net Income</span><span>Rp {basicInfo.penghasilanBulanan.toLocaleString('id-ID')}</span></div>
-
-            {/* Assets */}
-            <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '8px', marginBottom: '16px', textAlign: 'center', fontStyle: 'italic', fontWeight: 'normal' }}>Assets</h3>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span>Aset Lancar (Checking & Savings)</span><span>Rp {assets.filter(a => a.type === 'Lancar').reduce((sum, a) => sum + a.value, 0).toLocaleString('id-ID')}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span>Aset Investasi (Invested Assets)</span><span>Rp {assets.filter(a => a.type === 'Investasi').reduce((sum, a) => sum + a.value, 0).toLocaleString('id-ID')}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}><span>Aset Guna (Real Estate & Others)</span><span>Rp {assets.filter(a => a.type === 'Guna').reduce((sum, a) => sum + a.value, 0).toLocaleString('id-ID')}</span></div>
-
-            {/* Liabilities */}
-            <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '8px', marginBottom: '16px', textAlign: 'center', fontStyle: 'italic', fontWeight: 'normal' }}>Liabilities</h3>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px' }}><span>Total Hutang Berjalan</span><span>Rp {debts.reduce((sum, d) => sum + d.principal, 0).toLocaleString('id-ID')}</span></div>
-
-            {/* The Big Picture */}
-            <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '8px', marginBottom: '16px', textAlign: 'center', fontStyle: 'italic', fontWeight: 'normal' }}>The Big Picture</h3>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px' }}>
-              <div style={{ textAlign: 'center' }}>
-                <span style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Total Assets</span>
-                <span style={{ fontSize: '1.2rem', color: '#2193b0' }}>Rp {assets.reduce((sum, a) => sum + a.value, 0).toLocaleString('id-ID')}</span>
-              </div>
-              <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>-</span>
-              <div style={{ textAlign: 'center' }}>
-                <span style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Total Liabilities</span>
-                <span style={{ fontSize: '1.2rem', color: '#ff4e50' }}>Rp {debts.reduce((sum, d) => sum + d.principal, 0).toLocaleString('id-ID')}</span>
-              </div>
-              <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>=</span>
-              <div style={{ textAlign: 'center' }}>
-                <span style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Net Worth</span>
-                <span style={{ fontSize: '1.2rem', color: 'var(--primary)' }}>Rp {(assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0)).toLocaleString('id-ID')}</span>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '1.8rem', marginBottom: '8px' }}>Financial Ratio Analysis</h2>
-            <p style={{ color: 'var(--text-muted)' }}>Indikator kesehatan arus kas dan rasio hutang terhadap kekayaan bersih.</p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px', marginBottom: '40px' }}>
-            {/* Liquidity Ratio */}
-            <div className="glass-panel" style={{ padding: '24px', borderTop: '4px solid #2193b0' }}>
-              <h4 style={{ textAlign: 'center', marginBottom: '16px', letterSpacing: '1px' }}>LIQUIDITY RATIO</h4>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '0.9rem' }}><span>Total Aset Lancar</span><span>Rp {assets.filter(a => a.type === 'Lancar').reduce((sum, a) => sum + a.value, 0).toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '0.9rem' }}><span>Pengeluaran Bulanan</span><span>Rp {expenses.reduce((sum, e) => sum + e.amount, 0).toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', borderTop: '1px solid var(--border-color)', paddingTop: '8px', marginBottom: '12px' }}>
-                <span>RASIO</span>
-                <span>{(assets.filter(a => a.type === 'Lancar').reduce((sum, a) => sum + a.value, 0) / (expenses.reduce((sum, e) => sum + e.amount, 0) || 1)).toFixed(2)}x</span>
-              </div>
-              <div style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '8px' }}>Basic Guideline : &gt; Dana Darurat</div>
-              <div style={{ textAlign: 'center', background: (assets.filter(a => a.type === 'Lancar').reduce((sum, a) => sum + a.value, 0) / (expenses.reduce((sum, e) => sum + e.amount, 0) || 1)) >= 3 ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)', color: (assets.filter(a => a.type === 'Lancar').reduce((sum, a) => sum + a.value, 0) / (expenses.reduce((sum, e) => sum + e.amount, 0) || 1)) >= 3 ? '#2ecc71' : '#e74c3c', padding: '4px', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                {(assets.filter(a => a.type === 'Lancar').reduce((sum, a) => sum + a.value, 0) / (expenses.reduce((sum, e) => sum + e.amount, 0) || 1)) >= 3 ? 'SEHAT' : 'TIDAK SEHAT'}
-              </div>
-            </div>
-
-            {/* Liquid Asset to Net Worth */}
-            <div className="glass-panel" style={{ padding: '24px', borderTop: '4px solid #2193b0' }}>
-              <h4 style={{ textAlign: 'center', marginBottom: '16px', letterSpacing: '1px' }}>LIQUID ASSET TO NET WORTH RATIO</h4>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '0.9rem' }}><span>Total Aset Lancar</span><span>Rp {assets.filter(a => a.type === 'Lancar').reduce((sum, a) => sum + a.value, 0).toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '0.9rem' }}><span>Total Kekayaan Bersih</span><span>Rp {(assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0)).toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', borderTop: '1px solid var(--border-color)', paddingTop: '8px', marginBottom: '12px' }}>
-                <span>RASIO</span>
-                <span>{((assets.filter(a => a.type === 'Lancar').reduce((sum, a) => sum + a.value, 0) / (assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0) || 1)) * 100).toFixed(2)}%</span>
-              </div>
-              <div style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '8px' }}>Basic Guideline : 15% - 20%</div>
-              <div style={{ textAlign: 'center', background: ((assets.filter(a => a.type === 'Lancar').reduce((sum, a) => sum + a.value, 0) / (assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0) || 1)) * 100) >= 15 ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)', color: ((assets.filter(a => a.type === 'Lancar').reduce((sum, a) => sum + a.value, 0) / (assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0) || 1)) * 100) >= 15 ? '#2ecc71' : '#e74c3c', padding: '4px', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                {((assets.filter(a => a.type === 'Lancar').reduce((sum, a) => sum + a.value, 0) / (assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0) || 1)) * 100) >= 15 ? 'SEHAT' : 'TIDAK SEHAT'}
-              </div>
-            </div>
-
-            {/* Net Investment Asset to Net Worth */}
-            <div className="glass-panel" style={{ padding: '24px', borderTop: '4px solid #f9d423' }}>
-              <h4 style={{ textAlign: 'center', marginBottom: '16px', letterSpacing: '1px' }}>NET INVESTMENT TO NET WORTH</h4>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '0.9rem' }}><span>Total Aset Investasi</span><span>Rp {assets.filter(a => a.type === 'Investasi').reduce((sum, a) => sum + a.value, 0).toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '0.9rem' }}><span>Total Kekayaan Bersih</span><span>Rp {(assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0)).toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', borderTop: '1px solid var(--border-color)', paddingTop: '8px', marginBottom: '12px' }}>
-                <span>RASIO</span>
-                <span>{((assets.filter(a => a.type === 'Investasi').reduce((sum, a) => sum + a.value, 0) / (assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0) || 1)) * 100).toFixed(2)}%</span>
-              </div>
-              <div style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '8px' }}>Basic Guideline : &gt; 50%</div>
-              <div style={{ textAlign: 'center', background: ((assets.filter(a => a.type === 'Investasi').reduce((sum, a) => sum + a.value, 0) / (assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0) || 1)) * 100) >= 50 ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)', color: ((assets.filter(a => a.type === 'Investasi').reduce((sum, a) => sum + a.value, 0) / (assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0) || 1)) * 100) >= 50 ? '#2ecc71' : '#e74c3c', padding: '4px', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                {((assets.filter(a => a.type === 'Investasi').reduce((sum, a) => sum + a.value, 0) / (assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0) || 1)) * 100) >= 50 ? 'SEHAT' : 'TIDAK SEHAT'}
-              </div>
-            </div>
-
-            {/* Solvency Ratio */}
-            <div className="glass-panel" style={{ padding: '24px', borderTop: '4px solid #2ecc71' }}>
-              <h4 style={{ textAlign: 'center', marginBottom: '16px', letterSpacing: '1px' }}>SOLVENCY RATIO</h4>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '0.9rem' }}><span>Total Kekayaan Bersih</span><span>Rp {(assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0)).toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '0.9rem' }}><span>Total Aset</span><span>Rp {assets.reduce((sum, a) => sum + a.value, 0).toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', borderTop: '1px solid var(--border-color)', paddingTop: '8px', marginBottom: '12px' }}>
-                <span>RASIO</span>
-                <span>{(((assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0)) / (assets.reduce((sum, a) => sum + a.value, 0) || 1)) * 100).toFixed(2)}%</span>
-              </div>
-              <div style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '8px' }}>Basic Guideline : &gt; 35%</div>
-              <div style={{ textAlign: 'center', background: (((assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0)) / (assets.reduce((sum, a) => sum + a.value, 0) || 1)) * 100) >= 35 ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)', color: (((assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0)) / (assets.reduce((sum, a) => sum + a.value, 0) || 1)) * 100) >= 35 ? '#2ecc71' : '#e74c3c', padding: '4px', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                {(((assets.reduce((sum, a) => sum + a.value, 0) - debts.reduce((sum, d) => sum + d.principal, 0)) / (assets.reduce((sum, a) => sum + a.value, 0) || 1)) * 100) >= 35 ? 'SEHAT' : 'TIDAK SEHAT'}
-              </div>
-            </div>
-
-            {/* Debt to Asset */}
-            <div className="glass-panel" style={{ padding: '24px', borderTop: '4px solid #ff4e50' }}>
-              <h4 style={{ textAlign: 'center', marginBottom: '16px', letterSpacing: '1px' }}>DEBT TO ASSET RATIO</h4>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '0.9rem' }}><span>Total Hutang</span><span>Rp {debts.reduce((sum, d) => sum + d.principal, 0).toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '0.9rem' }}><span>Total Aset</span><span>Rp {assets.reduce((sum, a) => sum + a.value, 0).toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', borderTop: '1px solid var(--border-color)', paddingTop: '8px', marginBottom: '12px' }}>
-                <span>RASIO</span>
-                <span>{((debts.reduce((sum, d) => sum + d.principal, 0) / (assets.reduce((sum, a) => sum + a.value, 0) || 1)) * 100).toFixed(2)}%</span>
-              </div>
-              <div style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '8px' }}>Basic Guideline : &lt; 50%</div>
-              <div style={{ textAlign: 'center', background: ((debts.reduce((sum, d) => sum + d.principal, 0) / (assets.reduce((sum, a) => sum + a.value, 0) || 1)) * 100) <= 50 ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)', color: ((debts.reduce((sum, d) => sum + d.principal, 0) / (assets.reduce((sum, a) => sum + a.value, 0) || 1)) * 100) <= 50 ? '#2ecc71' : '#e74c3c', padding: '4px', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                {((debts.reduce((sum, d) => sum + d.principal, 0) / (assets.reduce((sum, a) => sum + a.value, 0) || 1)) * 100) <= 50 ? 'SEHAT' : 'TIDAK SEHAT'}
-              </div>
-            </div>
-
-            {/* Debt Service Ratio */}
-            <div className="glass-panel" style={{ padding: '24px', borderTop: '4px solid #ff4e50' }}>
-              <h4 style={{ textAlign: 'center', marginBottom: '16px', letterSpacing: '1px' }}>DEBT SERVICE RATIO</h4>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '0.9rem' }}><span>Total Cicilan Bulanan</span><span>Rp {debts.reduce((sum, d) => sum + d.monthlyInstallment, 0).toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '0.9rem' }}><span>Total Pemasukan Bulanan</span><span>Rp {basicInfo.penghasilanBulanan.toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', borderTop: '1px solid var(--border-color)', paddingTop: '8px', marginBottom: '12px' }}>
-                <span>RASIO</span>
-                <span>{((debts.reduce((sum, d) => sum + d.monthlyInstallment, 0) / (basicInfo.penghasilanBulanan || 1)) * 100).toFixed(2)}%</span>
-              </div>
-              <div style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '8px' }}>Basic Guideline : &lt; 30%</div>
-              <div style={{ textAlign: 'center', background: ((debts.reduce((sum, d) => sum + d.monthlyInstallment, 0) / (basicInfo.penghasilanBulanan || 1)) * 100) <= 30 ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)', color: ((debts.reduce((sum, d) => sum + d.monthlyInstallment, 0) / (basicInfo.penghasilanBulanan || 1)) * 100) <= 30 ? '#2ecc71' : '#e74c3c', padding: '4px', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                {((debts.reduce((sum, d) => sum + d.monthlyInstallment, 0) / (basicInfo.penghasilanBulanan || 1)) * 100) <= 30 ? 'SEHAT' : 'TIDAK SEHAT'}
-              </div>
-            </div>
-
-            {/* Saving Ratio */}
-            <div className="glass-panel" style={{ padding: '24px', borderTop: '4px solid #2ecc71' }}>
-              <h4 style={{ textAlign: 'center', marginBottom: '16px', letterSpacing: '1px' }}>SAVING RATIO</h4>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '0.9rem' }}><span>Sisa / Tabungan Bulanan</span><span>Rp {(basicInfo.penghasilanBulanan - expenses.reduce((sum, e) => sum + e.amount, 0) - debts.reduce((sum, d) => sum + d.monthlyInstallment, 0)).toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '0.9rem' }}><span>Total Pemasukan Bulanan</span><span>Rp {basicInfo.penghasilanBulanan.toLocaleString('id-ID')}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', borderTop: '1px solid var(--border-color)', paddingTop: '8px', marginBottom: '12px' }}>
-                <span>RASIO</span>
-                <span>{(((basicInfo.penghasilanBulanan - expenses.reduce((sum, e) => sum + e.amount, 0) - debts.reduce((sum, d) => sum + d.monthlyInstallment, 0)) / (basicInfo.penghasilanBulanan || 1)) * 100).toFixed(2)}%</span>
-              </div>
-              <div style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: '8px' }}>Basic Guideline : &gt; 10%</div>
-              <div style={{ textAlign: 'center', background: (((basicInfo.penghasilanBulanan - expenses.reduce((sum, e) => sum + e.amount, 0) - debts.reduce((sum, d) => sum + d.monthlyInstallment, 0)) / (basicInfo.penghasilanBulanan || 1)) * 100) >= 10 ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)', color: (((basicInfo.penghasilanBulanan - expenses.reduce((sum, e) => sum + e.amount, 0) - debts.reduce((sum, d) => sum + d.monthlyInstallment, 0)) / (basicInfo.penghasilanBulanan || 1)) * 100) >= 10 ? '#2ecc71' : '#e74c3c', padding: '4px', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                {(((basicInfo.penghasilanBulanan - expenses.reduce((sum, e) => sum + e.amount, 0) - debts.reduce((sum, d) => sum + d.monthlyInstallment, 0)) / (basicInfo.penghasilanBulanan || 1)) * 100) >= 10 ? 'SEHAT' : 'TIDAK SEHAT'}
-              </div>
-            </div>
-          </div>
-
-          <div className="glass-card" style={{ marginBottom: '40px' }}>
-            <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '12px', marginBottom: '16px' }}>📝 Catatan CFO (Overall Health Summary)</h3>
-            <p style={{ lineHeight: 1.6, color: 'var(--text-muted)' }}>{result.financial_checkup?.overall_health_summary || 'Tidak ada catatan khusus.'}</p>
-          </div>
-
-          <div style={{ textAlign: 'center', marginTop: '48px', paddingTop: '24px', borderTop: '1px solid var(--border-color)' }}>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '800px', margin: '0 auto', lineHeight: 1.6 }}>
-              This analysis is based on information from your online financial profile, our call, and any information provided by you during the financial planning process. CFO AI Planner assumes all information you have provided is accurate and does not independently verify the accuracy of any such information.
-            </p>
-          </div>
-          
-          <div style={{ textAlign: 'right', marginTop: '32px' }}>
-            <button onClick={() => setActiveTab('action_plan')} className="btn btn-primary">Lanjut ke Action Plan ➔</button>
-          </div>
-        </div>
+      {activeTab === 'checkup' && (
+        <FinancialCheckup 
+          basicInfo={basicInfo}
+          assets={assets}
+          debts={debts}
+          expenses={expenses}
+          result={result}
+        />
       )}
 
       {activeTab === 'action_plan' && result && (
