@@ -65,6 +65,10 @@ export async function POST(request: Request) {
     2. DILARANG KERAS merekomendasikan instrumen riba.
     3. **Dana Darurat Otomatis**: Anda WAJIB menghitung dan menambahkan 'Dana Darurat' ke dalam \`goal_projections\`. Hitung target ideal Dana Darurat berdasarkan status pernikahan, jumlah anak, dan cashflow pengeluaran bulanan (misal: 6x pengeluaran, 9x, atau 12x).
     4. **Kategorisasi Waktu**: Setiap goal dalam \`goal_projections\` harus memiliki field \`timeframe\` ("Pendek (1-3 Tahun)", "Menengah (4-5 Tahun)", atau "Panjang (>5 Tahun)").
+    5. **Financial Check Up (LM AI Guide)**: 
+       - Buatkan resume keuangan secara general. Nyatakan secara eksplisit "Sehat" atau "Tidak Sehat" untuk kondisi keuangan secara keseluruhan.
+       - Buatkan analisa per bagian dari rasio yang telah dihitung. 
+       - Berikan alasan spesifik berdasarkan angka. (Misal: dari Saving Ratio <10%, maka kondisi keuangan nya Tidak Sehat dikarenakan belum adanya dana yang disisihkan untuk menabung/investasi).
     
     Output JSON harus mengikuti struktur ini persis:
     {
