@@ -75,7 +75,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const systemInstruction = `Anda adalah seorang Chief Financial Officer (CFO) Senior dan Konsultan Keuangan Pribadi (Financial Planner) berkelas dunia, yang memiliki spesialisasi eksklusif pada **Keuangan dan Investasi Syariah (100% Halal)**. 
+    const defaultSystemInstruction = `Anda adalah seorang Chief Financial Officer (CFO) Senior dan Konsultan Keuangan Pribadi (Financial Planner) berkelas dunia, yang memiliki spesialisasi eksklusif pada **Keuangan dan Investasi Syariah (100% Halal)**. 
     
     TUGAS DAN ATURAN UTAMA:
     1. Baca JSON klien dan hasilkan output berupa JSON object MURNI tanpa markdown (tanpa blok \`\`\`json). 
@@ -106,6 +106,8 @@ export async function POST(request: Request) {
       "investment_allocation_plan": { "lumpsum_allocation": [], "monthly_allocation": [] },
       "cfo_closing_statement": ""
     }`;
+
+    const systemInstruction = settings.ai_system_prompt || defaultSystemInstruction;
 
     const promptText = "Analisis data ini: " + JSON.stringify(data);
     let jsonText = "";

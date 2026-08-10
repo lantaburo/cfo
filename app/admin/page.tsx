@@ -13,7 +13,8 @@ export default function AdminDashboard() {
     ai_provider: 'Gemini',
     ai_model: 'gemini-1.5-pro',
     ai_custom_url: '',
-    ai_api_key: ''
+    ai_api_key: '',
+    ai_system_prompt: ''
   });
 
   // User Management State
@@ -260,6 +261,17 @@ export default function AdminDashboard() {
                     className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none' }} 
                   />
                   <small style={{ color: 'var(--text-muted)', display: 'block', marginTop: '4px' }}>*Disimpan aman di Spreadsheet Anda</small>
+                </div>
+
+                <div style={{ marginBottom: '24px' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>System Prompt (LM Instruction)</label>
+                  <textarea 
+                    value={settings.ai_system_prompt || ''} 
+                    onChange={e => setSettings({...settings, ai_system_prompt: e.target.value})} 
+                    placeholder="Masukkan instruksi khusus untuk AI..."
+                    className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none', minHeight: '300px', resize: 'vertical' }} 
+                  />
+                  <small style={{ color: 'var(--text-muted)', display: 'block', marginTop: '4px' }}>*Kosongkan untuk menggunakan prompt default sistem.</small>
                 </div>
 
                 <button onClick={handleSaveSettings} disabled={isSaving} className="btn btn-primary" style={{ width: '100%' }}>
