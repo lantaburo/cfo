@@ -107,7 +107,9 @@ export async function POST(request: Request) {
       "cfo_closing_statement": ""
     }`;
 
-    const systemInstruction = settings.ai_system_prompt || defaultSystemInstruction;
+    const systemInstruction = (settings.ai_system_prompt && settings.ai_system_prompt.trim() !== '') 
+      ? settings.ai_system_prompt 
+      : defaultSystemInstruction;
 
     const promptText = "Analisis data ini: " + JSON.stringify(data);
     let jsonText = "";
