@@ -246,7 +246,7 @@ export default function InputData({
             <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '0.95rem' }}>Masukkan semua hutang yang masih berjalan. Data ini penting untuk menghitung rasio hutang Anda.</p>
             
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
-              <button onClick={() => setDebts([...debts, { id: Date.now(), name: '', principal: 0, monthlyInstallment: 0 }])} className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '0.9rem' }}>+ Tambah Hutang</button>
+              <button onClick={() => setDebts([...debts, { id: Date.now(), name: '', principal: 0, monthlyInstallment: 0, tenor: '', sifat: 'Konsumtif', agunan: 'Tidak' }])} className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '0.9rem' }}>+ Tambah Hutang</button>
             </div>
 
             {debts.map((debt: any, i: number) => (
@@ -266,6 +266,23 @@ export default function InputData({
                   <div style={{ flex: 1.5 }}>
                     <input type="text" placeholder="Cicilan Bulanan (Rp)" value={formatCurrency(debt.monthlyInstallment)} onChange={e => { const n = [...debts]; n[i].monthlyInstallment = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10) || 0; setDebts(n); }} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }} />
                     <small style={{ color: 'var(--text-muted)', display: 'block', marginTop: '4px', fontSize: '0.75rem' }}>*Yang dibayar tiap bulan</small>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
+                  <div style={{ flex: 1 }}>
+                    <input type="number" placeholder="Sisa Tenor (Bulan)" value={debt.tenor} onChange={e => { const n = [...debts]; n[i].tenor = e.target.value; setDebts(n); }} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <select value={debt.sifat} onChange={e => { const n = [...debts]; n[i].sifat = e.target.value; setDebts(n); }} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }}>
+                      <option value="Konsumtif">Sifat: Konsumtif</option>
+                      <option value="Produktif">Sifat: Produktif</option>
+                    </select>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <select value={debt.agunan} onChange={e => { const n = [...debts]; n[i].agunan = e.target.value; setDebts(n); }} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }}>
+                      <option value="Tidak">Agunan: Tidak Ada</option>
+                      <option value="Ada">Agunan: Ada</option>
+                    </select>
                   </div>
                 </div>
               </div>

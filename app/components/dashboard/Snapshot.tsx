@@ -107,8 +107,12 @@ export default function Snapshot({ basicInfo, assets, debts, expenses }: any) {
                   <td style={{ padding: '12px', textAlign: 'right' }}>{basicInfo.status}</td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-                  <td style={{ padding: '12px' }}>Anak</td>
-                  <td style={{ padding: '12px', textAlign: 'right' }}>{basicInfo.anak}</td>
+                  <td style={{ padding: '12px' }}>Tanggungan</td>
+                  <td style={{ padding: '12px', textAlign: 'right' }}>
+                    {basicInfo.tanggungan && basicInfo.tanggungan.length > 0 
+                      ? basicInfo.tanggungan.map((t: any) => `${t.hubungan || 'Tanggungan'} (${t.umur || 0} th)`).join(', ')
+                      : 'Tidak ada'}
+                  </td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
                   <td style={{ padding: '12px' }}>Penghasilan tahunan</td>
