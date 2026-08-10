@@ -59,7 +59,7 @@ export default function Dashboard() {
     usiaSuami: '',
     usiaIstri: '',
     status: 'Menikah',
-    anak: '',
+    tanggungan: [],
     incomesSuami: [{ id: Date.now(), source: 'Gaji Bulanan', customSource: '', amount: 0 }],
     incomesIstri: [{ id: Date.now() + 1, source: 'Tidak Ada (Ibu Rumah Tangga)', customSource: '', amount: 0 }],
     incomesTahunan: [{ id: Date.now() + 2, source: 'Bonus/THR', customSource: '', amount: 0 }],

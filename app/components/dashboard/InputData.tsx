@@ -81,9 +81,42 @@ export default function InputData({
                   <option>Belum Menikah</option>
                 </select>
               </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Jumlah Tanggungan (Anak)</label>
-                <input type="number" placeholder="Berapa anak yang ditanggung?" value={basicInfo.anak} onChange={e => setBasicInfo({...basicInfo, anak: +e.target.value})} className="glass-panel" style={{ width: '100%', padding: '12px', color: 'var(--text-main)', outline: 'none' }} />
+              <div style={{ gridColumn: '1 / -1', marginTop: '8px', background: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px' }}>
+                  <h4 style={{ color: 'var(--text-main)', margin: 0 }}>Daftar Tanggungan</h4>
+                  <button onClick={() => setBasicInfo({...basicInfo, tanggungan: [...(basicInfo.tanggungan || []), { id: Date.now(), hubungan: '', umur: '' }]})} className="btn btn-outline" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>+ Tambah Tanggungan</button>
+                </div>
+                
+                {(basicInfo.tanggungan || []).length === 0 && (
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', textAlign: 'center' }}>Tidak ada tanggungan.</p>
+                )}
+
+                {(basicInfo.tanggungan || []).map((t: any, i: number) => (
+                  <div key={t.id} style={{ display: 'flex', gap: '12px', marginBottom: '12px', background: 'rgba(0,0,0,0.1)', padding: '12px', borderRadius: '8px' }}>
+                    <div style={{ flex: 2 }}>
+                      <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>Hubungan / Siapa</label>
+                      <input type="text" placeholder="Contoh: Anak, Orang Tua, Keponakan" value={t.hubungan} onChange={e => {
+                        const newT = [...(basicInfo.tanggungan || [])];
+                        newT[i].hubungan = e.target.value;
+                        setBasicInfo({...basicInfo, tanggungan: newT});
+                      }} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>Umur (Tahun)</label>
+                      <input type="number" placeholder="Contoh: 12" value={t.umur} onChange={e => {
+                        const newT = [...(basicInfo.tanggungan || [])];
+                        newT[i].umur = e.target.value;
+                        setBasicInfo({...basicInfo, tanggungan: newT});
+                      }} className="glass-panel" style={{ width: '100%', padding: '10px', color: 'var(--text-main)', outline: 'none' }} />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '4px' }}>
+                       <button onClick={() => {
+                        const newT = (basicInfo.tanggungan || []).filter((_: any, idx: number) => idx !== i);
+                        setBasicInfo({...basicInfo, tanggungan: newT});
+                      }} style={{ background: 'transparent', border: 'none', color: '#ff4e50', cursor: 'pointer', fontSize: '1.2rem', padding: '10px' }}>✕</button>
+                    </div>
+                  </div>
+                ))}
               </div>
               <div style={{ gridColumn: '1 / -1', marginTop: '16px', background: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
                 <h4 style={{ marginBottom: '16px', color: 'var(--text-main)', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '12px' }}>Rincian Pendapatan Bulanan</h4>
