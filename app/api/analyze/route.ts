@@ -13,17 +13,29 @@ export async function POST(request: Request) {
 
     let settings: any = {};
     try {
-      const settingsRes = await fetch(WEBHOOK_URL, {
+      const initialRes = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'text/plain',
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         },
         body: JSON.stringify({ action: 'getSettings' }),
-        cache: 'no-store'
+        cache: 'no-store',
+        redirect: 'manual'
       });
       
-      let settingsData = await settingsRes.json();
+      let settingsData;
+      if (initialRes.status === 302 || initialRes.status === 303 || initialRes.status === 301 || initialRes.type === 'opaqueredirect') {
+        const location = initialRes.headers.get('location');
+        if (location) {
+          const redirectRes = await fetch(location, { cache: 'no-store' });
+          settingsData = await redirectRes.json();
+        } else {
+          throw new Error('Redirect location missing');
+        }
+      } else {
+        settingsData = await initialRes.json();
+      }
       
       if (settingsData && settingsData.status === 'success' && settingsData.settings) {
         settings = settingsData.settings;
@@ -71,9 +83,12 @@ export async function POST(request: Request) {
     3. **Dana Darurat Otomatis**: Anda WAJIB menghitung dan menambahkan 'Dana Darurat' ke dalam \`goal_projections\`. Hitung target ideal Dana Darurat berdasarkan status pernikahan, jumlah anak, dan cashflow pengeluaran bulanan (misal: 6x pengeluaran, 9x, atau 12x).
     4. **Kategorisasi Waktu**: Setiap goal dalam \`goal_projections\` harus memiliki field \`timeframe\` ("Pendek (1-3 Tahun)", "Menengah (4-5 Tahun)", atau "Panjang (>5 Tahun)").
     5. **Financial Check Up (LM AI Guide)**: 
-       - Buatkan resume keuangan secara general. Nyatakan secara eksplisit "Sehat" atau "Tidak Sehat" untuk kondisi keuangan secara keseluruhan.
-       - Buatkan analisa per bagian dari rasio yang telah dihitung. 
-       - Berikan alasan spesifik berdasarkan angka. (Misal: dari Saving Ratio <10%, maka kondisi keuangan nya Tidak Sehat dikarenakan belum adanya dana yang disisihkan untuk menabung/investasi).
+       Anda WAJIB membuat laporan analisis komprehensif yang diletakkan SEPENUHNYA ke dalam field \`overall_health_summary\` (gunakan format string dengan karakter newline \\n untuk paragraf). Wajib mencakup struktur persis berikut:
+       - **Narasi Hasil Analysis Setiap Rasio Keuangan**: Berikan narasi profesional mendalam untuk setiap rasio (Liquidity, Liquid Asset to Net Worth, Net Investment Asset to Net Worth, Debt to Asset, Solvency, Debt Service, Saving). Jangan sekadar menyebut 'Good' atau 'Poorly', jelaskan maknanya secara real, serta korelasinya dengan cashflow, utang, atau aset klien saat ini.
+       - **Kesimpulan & Resume Financial Check-Up**: Berikan kesimpulan menyeluruh. Nyatakan fase kesehatan keuangan (misal: "fase lampu kuning menuju merah" atau "fase sehat berkembang").
+       - **Diagnosis Utama**: Berikan satu kalimat tajam/punchy sebagai konklusi utama (contoh: "Kaya Likuiditas, Terjebak Defisit Arus Kas (Illusion of Wealth)").
+       - **3 Masalah Krusial yang Harus Dibenahi**: Buat daftar 3 poin krusial berdasarkan angka.
+       - **Rekomendasi Langkah Strategis (Action Plan)**: Buat daftar poin aksi konkrit (misal: restrukturisasi/pelunasan dini, rasionalisasi pengeluaran, re-alokasi aset).
     6. **Analisis Cashflow & Pengeluaran**:
        - Secara detail evaluasi kategori pengeluaran klien (Primer, Sekunder, Kewajiban, Sosial, Tabungan/Investasi, Latte Factor).
        - Khusus untuk **'Latte Factor'** (pengeluaran impulsif/terselubung): Berikan saran spesifik cara mengurangi/menghilangkannya untuk dialihkan ke investasi/tabungan.

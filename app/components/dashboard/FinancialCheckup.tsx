@@ -114,7 +114,7 @@ export default function FinancialCheckup({ basicInfo, assets, debts, expenses, r
       <div style={{ maxWidth: '900px', margin: '0 auto', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '32px' }}>
         <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '12px', marginBottom: '16px' }}>Resume Before FP (Financial Planning)</h3>
         {result?.financial_checkup?.overall_health_summary ? (
-          <p style={{ lineHeight: 1.6, color: 'var(--text-muted)' }}>{result.financial_checkup.overall_health_summary}</p>
+          <p style={{ lineHeight: 1.6, color: 'var(--text-muted)', whiteSpace: 'pre-wrap' }}>{result.financial_checkup.overall_health_summary}</p>
         ) : (
           <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
             <p>Silakan klik tombol "Generate Bookplan AI" di tab Input Data untuk mendapatkan Resume AI secara otomatis, atau Anda dapat menganalisis hasil rasio di atas secara mandiri.</p>
