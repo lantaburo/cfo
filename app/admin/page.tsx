@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import RiskProfileEditor from './RiskProfileEditor';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -9,13 +10,17 @@ export default function AdminDashboard() {
   // Settings State
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<any>({
     ai_provider: 'Gemini',
     ai_model: 'gemini-1.5-pro',
     ai_custom_url: '',
     ai_api_key: '',
-    ai_system_prompt: ''
+    ai_system_prompt: '',
+    risk_profile_questions: ''
   });
+
+  // Tab State
+  const [activeTab, setActiveTab] = useState<'main' | 'risk_profile'>('main');
 
   // User Management State
   const [users, setUsers] = useState<any[]>([]);
@@ -160,7 +165,7 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (data.status === 'success' && data.settings) {
-        setSettings(prev => ({ ...prev, ...data.settings }));
+        setSettings((prev: any) => ({ ...prev, ...data.settings }));
       }
     } catch (e) {
       console.error("Failed to fetch settings", e);
@@ -200,9 +205,24 @@ export default function AdminDashboard() {
         <>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
             <h2>Admin Dashboard</h2>
+            <div style={{ display: 'flex', gap: '8px', background: 'rgba(255,255,255,0.05)', padding: '4px', borderRadius: '8px' }}>
+              <button 
+                onClick={() => setActiveTab('main')} 
+                style={{ padding: '8px 16px', borderRadius: '6px', background: activeTab === 'main' ? 'var(--primary)' : 'transparent', color: activeTab === 'main' ? 'white' : 'var(--text-muted)', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+              >
+                Klien & AI
+              </button>
+              <button 
+                onClick={() => setActiveTab('risk_profile')} 
+                style={{ padding: '8px 16px', borderRadius: '6px', background: activeTab === 'risk_profile' ? 'var(--primary)' : 'transparent', color: activeTab === 'risk_profile' ? 'white' : 'var(--text-muted)', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+              >
+                Kuesioner Profil Risiko
+              </button>
+            </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '32px' }}>
+          {activeTab === 'main' ? (
+            <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '32px' }}>
         
         {/* Sidebar Settings */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -367,6 +387,14 @@ export default function AdminDashboard() {
         </div>
 
           </div>
+          ) : activeTab === 'risk_profile' ? (
+            <RiskProfileEditor 
+              settings={settings} 
+              setSettings={setSettings} 
+              isSaving={isSaving} 
+              handleSaveSettings={handleSaveSettings} 
+            />
+          ) : null}
         </>
       ) : (
         <div className="animate-fade-in">

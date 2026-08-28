@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const QUESTIONS = [
+const DEFAULT_QUESTIONS = [
   {
     id: 1,
     question: "Tujuan investasi utama Anda adalah?",
@@ -186,14 +186,40 @@ const QUESTIONS = [
 ];
 
 export default function RiskProfile({ riskProfile, setRiskProfile, onNext, isAnalyzing, analyzeProgress }: any) {
+  const [questions, setQuestions] = useState<any[]>(DEFAULT_QUESTIONS);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>(riskProfile?.answers || {});
 
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const res = await fetch('/api/gsheets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'getSettings' })
+        });
+        const data = await res.json();
+        if (data.status === 'success' && data.settings?.risk_profile_questions) {
+          const parsed = JSON.parse(data.settings.risk_profile_questions);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setQuestions(parsed);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load questions", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchQuestions();
+  }, []);
+
   const handleSelect = (score: number) => {
-    setAnswers({ ...answers, [QUESTIONS[currentQuestion].id]: score });
+    setAnswers({ ...answers, [questions[currentQuestion].id]: score });
     
     // Auto-advance if not on the last question
-    if (currentQuestion < QUESTIONS.length - 1) {
+    if (currentQuestion < questions.length - 1) {
       setTimeout(() => {
         setCurrentQuestion(curr => curr + 1);
       }, 300);
@@ -201,21 +227,27 @@ export default function RiskProfile({ riskProfile, setRiskProfile, onNext, isAna
   };
 
   const calculateProfile = () => {
-    const totalScore = Object.values(answers).reduce((a, b) => a + b, 0);
+    const totalScore = Object.values(answers).reduce((a: any, b: any) => a + b, 0);
     
     let type = '';
     let description = '';
     let allocation = '';
     
-    if (totalScore <= 30) {
+    // Adjust logic slightly to accommodate varying max scores.
+    // Default max score is 18 * 4 = 72.
+    // If questions change, we adapt percentages based on total available score.
+    const maxScore = questions.length * 4;
+    const scorePercentage = totalScore / maxScore;
+    
+    if (scorePercentage <= 0.41) { // 30/72
       type = 'KONSERVATIF';
       description = 'Penghindaran risiko tinggi. Prioritas utama: keamanan modal.';
       allocation = 'Deposito 60%, Obligasi 30%, Reksadana Pendapatan Tetap 10%';
-    } else if (totalScore <= 45) {
+    } else if (scorePercentage <= 0.62) { // 45/72
       type = 'MODERAT';
       description = 'Keseimbangan antara keamanan dan pertumbuhan. Fleksibel terhadap risiko sedang.';
       allocation = 'Obligasi 40%, Reksadana Campuran 35%, Saham/Equity 25%';
-    } else if (totalScore <= 60) {
+    } else if (scorePercentage <= 0.83) { // 60/72
       type = 'AGRESIF SEDANG';
       description = 'Fokus pada pertumbuhan jangka panjang. Dapat mentolerir volatilitas signifikan.';
       allocation = 'Reksadana Saham 50%, Reksadana Campuran 30%, Obligasi 20%';
@@ -227,6 +259,7 @@ export default function RiskProfile({ riskProfile, setRiskProfile, onNext, isAna
     
     setRiskProfile({
       score: totalScore,
+      maxScore: maxScore,
       type,
       description,
       allocation,
@@ -234,7 +267,7 @@ export default function RiskProfile({ riskProfile, setRiskProfile, onNext, isAna
     });
   };
 
-  const progressPercentage = ((currentQuestion) / QUESTIONS.length) * 100;
+  const progressPercentage = ((currentQuestion) / questions.length) * 100;
 
   if (riskProfile?.score) {
     return (
@@ -247,7 +280,7 @@ export default function RiskProfile({ riskProfile, setRiskProfile, onNext, isAna
         <div className="glass-panel" style={{ padding: '32px', textAlign: 'center', marginBottom: '32px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #F9D423, #FF4E50)' }}></div>
           
-          <div style={{ fontSize: '1.2rem', color: 'var(--text-muted)', marginBottom: '8px' }}>Skor Total: <span style={{ color: 'var(--text)', fontWeight: 'bold' }}>{riskProfile.score}</span>/72</div>
+          <div style={{ fontSize: '1.2rem', color: 'var(--text-muted)', marginBottom: '8px' }}>Skor Total: <span style={{ color: 'var(--text)', fontWeight: 'bold' }}>{riskProfile.score}</span>/{riskProfile.maxScore || 72}</div>
           
           <h1 className="gold-text" style={{ fontSize: '3rem', margin: '16px 0' }}>{riskProfile.type}</h1>
           
@@ -287,7 +320,15 @@ export default function RiskProfile({ riskProfile, setRiskProfile, onNext, isAna
     );
   }
 
-  const q = QUESTIONS[currentQuestion];
+  if (isLoading) {
+    return <div className="flex-center" style={{ height: '300px', color: 'var(--text-muted)' }}>Memuat kuesioner...</div>;
+  }
+
+  const q = questions[currentQuestion];
+
+  if (!q) {
+    return <div className="flex-center" style={{ height: '300px', color: '#ef4444' }}>Gagal memuat pertanyaan.</div>;
+  }
 
   return (
     <div className="animate-fade-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -300,7 +341,7 @@ export default function RiskProfile({ riskProfile, setRiskProfile, onNext, isAna
         {/* Progress Bar */}
         <div style={{ marginBottom: '32px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: 'var(--text-muted)' }}>
-            <span>Pertanyaan {currentQuestion + 1} dari {QUESTIONS.length}</span>
+            <span>Pertanyaan {currentQuestion + 1} dari {questions.length}</span>
             <span>{Math.round(progressPercentage)}%</span>
           </div>
           <div style={{ height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
@@ -315,7 +356,7 @@ export default function RiskProfile({ riskProfile, setRiskProfile, onNext, isAna
 
         {/* Options */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {q.options.map((opt, idx) => {
+          {q.options && q.options.map((opt: any, idx: number) => {
             const isSelected = answers[q.id] === opt.score;
             return (
               <button 
