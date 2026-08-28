@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { DEFAULT_QUESTIONS } from '../components/dashboard/RiskProfile';
 
 export default function RiskProfileEditor({ settings, setSettings, isSaving, handleSaveSettings }: any) {
   const [questions, setQuestions] = useState<any[]>([]);
@@ -17,28 +18,7 @@ export default function RiskProfileEditor({ settings, setSettings, isSaving, han
     }
     
     // Fallback default questions if empty or invalid
-    setQuestions([
-      {
-        id: 1,
-        question: "Tujuan investasi utama Anda adalah?",
-        options: [
-          { label: "Menjaga daya beli dan keamanan modal", score: 1 },
-          { label: "Pertumbuhan modal dengan risiko rendah-sedang", score: 2 },
-          { label: "Pertumbuhan modal yang signifikan", score: 3 },
-          { label: "Pertumbuhan maksimal tanpa khawatir dengan volatilitas tinggi", score: 4 }
-        ]
-      },
-      {
-        id: 2,
-        question: "Jangka waktu investasi Anda?",
-        options: [
-          { label: "Kurang dari 1 tahun", score: 1 },
-          { label: "1-3 tahun", score: 2 },
-          { label: "3-10 tahun", score: 3 },
-          { label: "Lebih dari 10 tahun", score: 4 }
-        ]
-      }
-    ]); // Initial short list, in real usage it defaults to the full list or what is saved
+    setQuestions(DEFAULT_QUESTIONS);
   }, [settings.risk_profile_questions]);
 
   // Sync to parent settings

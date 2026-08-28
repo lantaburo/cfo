@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-const DEFAULT_QUESTIONS = [
+export const DEFAULT_QUESTIONS = [
   {
     id: 1,
     question: "Tujuan investasi utama Anda adalah?",
