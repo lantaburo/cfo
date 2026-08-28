@@ -94,6 +94,7 @@ export async function POST(request: Request) {
        - Khusus untuk **'Latte Factor'** (pengeluaran impulsif/terselubung): Berikan saran spesifik cara mengurangi/menghilangkannya untuk dialihkan ke investasi/tabungan.
        - Khusus untuk **'Sosial'**: Pastikan pengalokasian Zakat/Infaq/Sedekah sudah sesuai standar Syariah.
        - Khusus untuk **'Primer' & 'Kewajiban'**: Pastikan proporsinya tidak melebihi batas wajar.
+    7. **Profil Risiko (Risk Profile)**: Klien telah mengisi kuesioner profil risiko dan hasilnya terdapat di dalam data JSON (\`riskProfile\`). Gunakan skor, tipe profil (Konservatif, Moderat, Agresif Sedang, Agresif), dan saran alokasi aset yang ada di dalamnya sebagai dasar UTAMA dalam menyusun \`investment_allocation_plan\`. Jangan berikan saran alokasi yang bertentangan dengan profil risikonya.
     
     Output JSON harus mengikuti struktur ini persis:
     {

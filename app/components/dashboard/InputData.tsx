@@ -14,9 +14,9 @@ export default function InputData({
   goals,
   setGoals,
   formatCurrency,
-  isAnalyzing,
   analyzeProgress,
-  handleAnalyze
+  handleAnalyze,
+  setActiveTab
 }: any) {
   const handleIncomeChange = (type: 'Suami' | 'Istri' | 'Tahunan', index: number, field: string, value: any) => {
     const listKey = `incomes${type}`;
@@ -379,11 +379,10 @@ export default function InputData({
                     <span>{analyzeProgress >= 95 ? '95% (Menunggu AI...)' : `${analyzeProgress}%`}</span>
                   </div>
                 </div>
-              ) : (
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <button onClick={() => setStep(4)} className="btn btn-outline">⬅ Kembali</button>
-                  <button onClick={handleAnalyze} className="btn btn-primary" style={{ minWidth: '200px' }}>
-                    ✅ Generate Bookplan AI
+                  <button onClick={() => setActiveTab('risk_profile')} className="btn btn-primary" style={{ minWidth: '200px' }}>
+                    Lanjut ke Profil Risiko ➔
                   </button>
                 </div>
               )}

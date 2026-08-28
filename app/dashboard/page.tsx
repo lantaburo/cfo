@@ -6,6 +6,7 @@ import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, L
 import InputData from '../components/dashboard/InputData';
 import Snapshot from '../components/dashboard/Snapshot';
 import FinancialCheckup from '../components/dashboard/FinancialCheckup';
+import RiskProfile from '../components/dashboard/RiskProfile';
 
 const COLORS = ['#F9D423', '#2193b0', '#6dd5ed', '#ff4e50', '#f9d423'];
 
@@ -18,6 +19,7 @@ export default function Dashboard() {
   const [step, setStep] = useState(1);
   const [user, setUser] = useState<any>(null);
   const [meta, setMeta] = useState<any>(null);
+  const [riskProfile, setRiskProfile] = useState<any>(null);
   const [isApproving, setIsApproving] = useState(false);
   const router = useRouter();
 
@@ -34,6 +36,9 @@ export default function Dashboard() {
         setDebts(parsed.financialData.debts || debts);
         setExpenses(parsed.financialData.expenses || expenses);
         setGoals(parsed.financialData.goals || goals);
+        if (parsed.financialData.riskProfile) {
+          setRiskProfile(parsed.financialData.riskProfile);
+        }
       }
       if (parsed.actionPlan) {
         setResult(parsed.actionPlan);
@@ -95,7 +100,8 @@ export default function Dashboard() {
         assets,
         debts,
         expenses,
-        goals
+        goals,
+        riskProfile
       };
 
       const res = await fetch('/api/analyze', {
@@ -172,7 +178,7 @@ export default function Dashboard() {
       const payload = {
         action: 'saveData',
         email: user.email,
-        financialData: { basicInfo, assets, debts, expenses, goals },
+        financialData: { basicInfo, assets, debts, expenses, goals, riskProfile },
         actionPlan: editableResult
       };
       
@@ -218,11 +224,12 @@ export default function Dashboard() {
       {/* Header Tabs */}
       <div style={{ display: 'flex', gap: '24px', marginBottom: '32px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px', overflowX: 'auto' }}>
         <button onClick={() => setActiveTab('input')} style={navButtonStyle('input')}>1. Input Data</button>
-        <button onClick={() => setActiveTab('snapshot')} style={navButtonStyle('snapshot')}>2. Snapshot</button>
-        <button onClick={() => setActiveTab('checkup')} style={navButtonStyle('checkup')}>3. Financial Checkup</button>
-        <button onClick={() => result && setActiveTab('action_plan')} disabled={!result} style={navButtonStyle('action_plan')}>4. Action Plan</button>
-        <button onClick={() => result && setActiveTab('rekomendasi')} disabled={!result} style={navButtonStyle('rekomendasi')}>5. Rekomendasi</button>
-        <button onClick={() => result && setActiveTab('edit_final')} disabled={!result} style={navButtonStyle('edit_final')}>6. Finalisasi</button>
+        <button onClick={() => setActiveTab('risk_profile')} style={navButtonStyle('risk_profile')}>2. Profil Risiko</button>
+        <button onClick={() => setActiveTab('snapshot')} style={navButtonStyle('snapshot')}>3. Snapshot</button>
+        <button onClick={() => setActiveTab('checkup')} style={navButtonStyle('checkup')}>4. Financial Checkup</button>
+        <button onClick={() => result && setActiveTab('action_plan')} disabled={!result} style={navButtonStyle('action_plan')}>5. Action Plan</button>
+        <button onClick={() => result && setActiveTab('rekomendasi')} disabled={!result} style={navButtonStyle('rekomendasi')}>6. Rekomendasi</button>
+        <button onClick={() => result && setActiveTab('edit_final')} disabled={!result} style={navButtonStyle('edit_final')}>7. Finalisasi</button>
       </div>
 
       {activeTab === 'input' && (
@@ -243,6 +250,17 @@ export default function Dashboard() {
           isAnalyzing={isAnalyzing}
           analyzeProgress={analyzeProgress}
           handleAnalyze={handleAnalyze}
+          setActiveTab={setActiveTab}
+        />
+      )}
+
+      {activeTab === 'risk_profile' && (
+        <RiskProfile
+          riskProfile={riskProfile}
+          setRiskProfile={setRiskProfile}
+          onNext={handleAnalyze}
+          isAnalyzing={isAnalyzing}
+          analyzeProgress={analyzeProgress}
         />
       )}
 
