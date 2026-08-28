@@ -108,9 +108,11 @@ export async function POST(request: Request) {
       "cfo_closing_statement": ""
     }`;
 
-    const systemInstruction = (settings.ai_system_prompt && settings.ai_system_prompt.trim() !== '') 
+    let baseInstruction = (settings.ai_system_prompt && settings.ai_system_prompt.trim() !== '') 
       ? settings.ai_system_prompt 
       : defaultSystemInstruction;
+
+    const systemInstruction = baseInstruction + "\n\nATURAN TAMBAHAN (PROFIL RISIKO):\nKlien telah mengisi kuesioner profil risiko dan hasilnya terdapat di dalam data JSON (`riskProfile`). Gunakan skor, tipe profil (Konservatif, Moderat, Agresif Sedang, Agresif), dan saran alokasi aset yang ada di dalamnya sebagai dasar UTAMA dalam menyusun `investment_allocation_plan`. Jangan berikan saran alokasi yang bertentangan dengan profil risikonya.";
 
     const promptText = "Analisis data ini: " + JSON.stringify(data);
     let jsonText = "";
@@ -173,7 +175,12 @@ export async function POST(request: Request) {
     }
 
     // Clean up potential markdown formatting from custom providers
-    jsonText = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+    const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      jsonText = jsonMatch[0];
+    } else {
+      jsonText = jsonText.replace(/```json/ig, '').replace(/```/g, '').trim();
+    }
     
     return NextResponse.json(JSON.parse(jsonText));
 
