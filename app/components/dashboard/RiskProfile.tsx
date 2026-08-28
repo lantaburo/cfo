@@ -400,17 +400,17 @@ export default function RiskProfile({ riskProfile, setRiskProfile, onNext, isAna
           ⬅ Sebelumnya
         </button>
         
-        {currentQuestion === QUESTIONS.length - 1 ? (
+        {currentQuestion === questions.length - 1 ? (
           <button 
             onClick={calculateProfile}
-            disabled={!answers[QUESTIONS[QUESTIONS.length - 1].id]}
-            className="btn btn-primary"
+            disabled={!answers[questions[questions.length - 1].id]}
+            className="btn btn-primary" style={{ padding: '12px 24px' }}
           >
             Lihat Hasil Profil Risiko ➔
           </button>
         ) : (
           <button 
-            onClick={() => setCurrentQuestion(c => Math.min(QUESTIONS.length - 1, c + 1))}
+            onClick={() => setCurrentQuestion(c => Math.min(questions.length - 1, c + 1))}
             disabled={!answers[q.id]}
             className="btn btn-primary"
             style={{ opacity: !answers[q.id] ? 0.5 : 1 }}
