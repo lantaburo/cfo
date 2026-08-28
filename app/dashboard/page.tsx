@@ -398,11 +398,11 @@ export default function Dashboard() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginBottom: '40px' }}>
             <div className="glass-card">
               <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '12px', marginBottom: '16px' }}>🩺 Ringkasan Kesehatan</h3>
-              <p style={{ lineHeight: 1.6, color: 'var(--text-muted)' }}>{result.financial_checkup.overall_health_summary}</p>
+              <p style={{ lineHeight: 1.6, color: 'var(--text-muted)', whiteSpace: 'pre-wrap' }}>{result.financial_checkup.overall_health_summary}</p>
             </div>
             <div className="glass-card">
               <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '12px', marginBottom: '16px' }}>📈 Asumsi Makro</h3>
-              <p style={{ lineHeight: 1.6, color: 'var(--text-muted)' }}>{result.macro_micro_analysis.investment_climate}</p>
+              <p style={{ lineHeight: 1.6, color: 'var(--text-muted)', whiteSpace: 'pre-wrap' }}>{result.macro_micro_analysis.investment_climate}</p>
             </div>
           </div>
 
@@ -427,7 +427,7 @@ export default function Dashboard() {
                   <strong style={{ fontSize: '1.1rem', color: 'var(--primary)' }}>Rp {(goal.recommended_monthly_investment).toLocaleString('id-ID')}</strong>
                 </div>
                 {goal.notes && (
-                  <p style={{ marginTop: '12px', fontSize: '0.9rem', color: 'var(--text-muted)', borderTop: '1px solid var(--border-color)', paddingTop: '12px' }}>
+                  <p style={{ marginTop: '12px', fontSize: '0.9rem', color: 'var(--text-muted)', borderTop: '1px solid var(--border-color)', paddingTop: '12px', whiteSpace: 'pre-wrap' }}>
                     {goal.notes}
                   </p>
                 )}

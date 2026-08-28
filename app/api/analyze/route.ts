@@ -85,7 +85,7 @@ TUGAS DAN ATURAN UTAMA:
    - Kebutuhan DD per bulan = Total Pengeluaran Bulanan (Primer) + Total Kewajiban Bulanan (Cicilan utang).
    - Tentukan Periode (Bulan) berdasarkan profil klien (misal: 6 bulan, 9 bulan, atau 12 bulan).
    - Total Kebutuhan DD = Kebutuhan DD per bulan x Periode.
-   - Target Dana Darurat (\`target_amount\`) = 30% x Total Kebutuhan DD, lalu dibulatkan ke atas.
+   - Target Dana Darurat (\`target_amount\`) = 30% x Total Kebutuhan DD (TIDAK PERLU DIBULATKAN, biarkan nominal aslinya).
    (WAJIB sertakan breakdown perhitungan di field \`notes\` dengan format persis seperti ini (gunakan literal \\n untuk baris baru): "Kebutuhan DD per bulan: Rp [X]\\nPeriode: [Y] bulan\\nDana Darurat Ideal: Rp [Z]\\nPemenuhan Minimal (30%): Rp [Target_Amount]").
 4. **Kategorisasi Waktu**: Setiap goal dalam \`goal_projections\` harus memiliki field \`timeframe\` ("Pendek (1-3 Tahun)", "Menengah (4-5 Tahun)", atau "Panjang (>5 Tahun)").
 5. **Financial Check Up (LM AI Guide)**: 
