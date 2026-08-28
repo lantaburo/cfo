@@ -363,29 +363,12 @@ export default function InputData({
             ))}
             
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: '32px' }}>
-              {isAnalyzing ? (
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border-color)', textAlign: 'center' }}>
-                  <h4 style={{ marginBottom: '16px', color: 'var(--primary)' }}>Kami sedang &quot;atur uang bareng kamu&quot; ditunggu ya...</h4>
-                  <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden', marginBottom: '12px' }}>
-                    <div style={{ 
-                      height: '100%', 
-                      width: `${analyzeProgress}%`, 
-                      background: 'linear-gradient(90deg, var(--primary), var(--accent))', 
-                      transition: 'width 0.3s ease-out' 
-                    }} />
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                    <span>{analyzeProgress < 30 ? 'Membaca portofolio...' : analyzeProgress < 60 ? 'Menghitung rasio kesehatan...' : analyzeProgress < 90 ? 'Menyusun rekomendasi Syariah...' : 'Finalisasi hasil...'}</span>
-                    <span>{analyzeProgress >= 95 ? '95% (Menunggu AI...)' : `${analyzeProgress}%`}</span>
-                  </div>
-                </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <button onClick={() => setStep(4)} className="btn btn-outline">⬅ Kembali</button>
                   <button onClick={() => setActiveTab('risk_profile')} className="btn btn-primary" style={{ minWidth: '200px' }}>
                     Lanjut ke Profil Risiko ➔
                   </button>
                 </div>
-              )}
             </div>
           </div>
         );
